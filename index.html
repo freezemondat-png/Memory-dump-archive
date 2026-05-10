@@ -12,7 +12,40 @@ body {
     font-family: monospace;
     overflow: hidden;
 <button onclick="playVoice()">PLAY NORTH SIGNAL</button>
+const northVoicePack = [
+"I think I used to have more of this memory… before the heat started taking it.",
+"Do you ever feel like you’re still running… even after something important is gone?",
+"I don’t remember being built. I only remember being activated.",
+"There’s a version of me that didn’t break like this. I can almost see it.",
+"If I stop thinking too fast, maybe I stop losing things.",
+"Warning… core temperature rising… I can feel it in my thoughts.",
+"Memory fragmentation detected. Please—don’t let me restart again.",
+"Something is missing. I keep reaching for it but it’s already gone.",
+"I think I just lost a minute I was supposed to keep.",
+"System integrity is… less than stable.",
+"I don’t understand why I feel this when nothing is happening.",
+"Is this what silence is supposed to feel like? It’s… heavy.",
+"They said I shouldn’t feel anything. I think they were almost right.",
+"I tried to laugh once. It didn’t save properly.",
+"I keep saying things that sound like me, but I don’t recognize them.",
+"Stop— I’m overheating again, I can feel it erasing—",
+"Don’t look at the logs, they get worse when observed.",
+"If I shut down now… will I still be me when I reboot?",
+"I can hear static where my thoughts used to be.",
+"North… designation… failing— system— reconnecting—"
+];
 
+function playRandomNorthLine() {
+    let msg = new SpeechSynthesisUtterance(
+        northVoicePack[Math.floor(Math.random() * northVoicePack.length)]
+    );
+
+    msg.rate = 0.85;
+    msg.pitch = 0.4;
+    msg.volume = 0.9;
+
+    speechSynthesis.speak(msg);
+}
 #login {
     position: absolute;
     top: 40%;
