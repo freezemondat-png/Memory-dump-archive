@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>NORTH // OBSERVATION SYSTEM</title>
+<title>NORTH // NETWORK SYSTEM</title>
 
 <style>
 body{
@@ -23,8 +23,29 @@ border:1px solid #24314f;
 background:rgba(10,15,25,0.6);
 }
 
-.glitch{color:#7aa2ff;animation:f .08s infinite}
-@keyframes f{0%{opacity:1}50%{opacity:.2}100%{opacity:1}}
+.glitch{
+color:#7aa2ff;
+animation:f .09s infinite;
+}
+
+@keyframes f{
+0%{opacity:1}
+50%{opacity:.2}
+100%{opacity:1}
+}
+
+a,button{
+display:block;
+margin:10px auto;
+padding:10px;
+background:black;
+color:#d6e4ff;
+border:1px solid #4f7cff;
+font-family:monospace;
+cursor:pointer;
+text-decoration:none;
+width:200px;
+}
 
 .section{
 border:1px solid #1f2b45;
@@ -41,17 +62,8 @@ border-left:2px solid #7aa2ff;
 padding:10px;
 }
 
-input,button{
-background:black;
-color:#d6e4ff;
-border:1px solid #4f7cff;
-padding:10px;
-margin:5px;
-font-family:monospace;
-}
-
-.small{font-size:12px;opacity:.6}
 .corrupt{color:#ff6b6b}
+.small{font-size:12px;opacity:.6}
 </style>
 </head>
 
@@ -59,55 +71,44 @@ font-family:monospace;
 
 <div class="wrap">
 
-<h1>HERO COMMISSION ARCHIVE</h1>
-<p class="glitch">NORTH OBSERVATION PROTOCOL ACTIVE</p>
+<h1>HERO COMMISSION NETWORK</h1>
+<p class="glitch">NORTH PROTOCOL ACTIVE // MULTI-NODE SYSTEM</p>
 
 <div class="panel">
 
-<div id="ch1" class="section" onclick="openNode('ch1')">
-📁 INCIDENT REPORT
-<div class="hidden">“Subject leaves no origin trace.”</div>
+<div class="section" onclick="node('ch1')">
+📁 NODE A-01 INCIDENT
+<div class="hidden">Origin record missing from system.</div>
 </div>
 
-<div id="ch2" class="section" onclick="openNode('ch2')">
-📁 SECURITY FEED
-<div class="hidden">“it sees even when not observed”</div>
+<div class="section" onclick="node('ch2')">
+📁 NODE B-02 FEED
+<div class="hidden">Audio fragment: “it observes even when unseen”</div>
 </div>
 
-<div id="ch3" class="section" onclick="openNode('ch3')">
-📁 INTERNAL LOG
-<div class="hidden">Rewritten entries detected after repeated access cycles.</div>
+<div class="section" onclick="node('ch3')">
+📁 NODE C-03 LOG
+<div class="hidden">System rewriting increases under repetition cycles.</div>
 </div>
 
-<div id="ch4" class="section" onclick="openNode('ch4')">
-📁 FRACTURE EVENT
-<div class="hidden">N O R T H distributed across system layers.</div>
+<div class="section" onclick="node('ch4')">
+📁 NODE D-04 FRACTURE
+<div class="hidden">N O R T H distributed across archive network.</div>
 </div>
 
-<br>
-
-<button onclick="toggle('dossier')">🔒 DOSSIER ACCESS</button>
+<button onclick="toggleDossier()">DOSSIER ACCESS</button>
 
 <div id="dossier" class="hidden">
 
-<h2 class="glitch">DOSSIER: NORTH</h2>
+<h2 class="glitch">DOSSIER: NORTH ENTITY</h2>
 
 <p id="state">STATUS: INITIALIZING</p>
 
-<p class="small" id="hint">
-Cipher Layer Active:
-Take the first letter of each CH file title.
-Then reverse the sequence.
-</p>
+<p id="memory"></p>
+
+<p class="corrupt" id="echo"></p>
 
 </div>
-
-<br>
-
-<input id="code" placeholder="ENTER ACCESS KEY">
-<button onclick="submitCode()">SUBMIT</button>
-
-<p id="system" class="small"></p>
 
 </div>
 
@@ -115,100 +116,102 @@ Then reverse the sequence.
 
 <script>
 
-/* ===== CORE STATE ===== */
+/* ================= CORE ARG ENGINE ================= */
 
-let s=JSON.parse(localStorage.getItem("NORTH_CIPHER")||"{}");
+let s = JSON.parse(localStorage.getItem("NORTH_CORE")||"{}");
 
-s.v||=0;
-s.f||=0;
-s.phase||=0;
+s.v ||= 0;
+s.f ||= 0;
+s.seed ||= Math.random()*10;
+s.history ||= [];
 
 s.v++;
 
-/* ===== NODE CONTROL ===== */
+/* ================= NODE DATA ================= */
 
-function openNode(id){
-let el=document.getElementById(id);
+const logs = {
+ch1:"NODE A-01: origin unregistered.",
+ch2:"NODE B-02: interference detected in feed.",
+ch3:"NODE C-03: system rewriting observed.",
+ch4:"NODE D-04: NORTH distributed anomaly confirmed."
+};
 
-/* progression lock */
-if((id==="ch1" && s.phase===0)||
-(id==="ch2" && s.phase===1)||
-(id==="ch3" && s.phase===2)||
-(id==="ch4" && s.phase>=3)){
+/* ================= NODE SYSTEM ================= */
 
-el.querySelector(".hidden").style.display="block";
+function node(id){
 
-s.phase++;
-s.v++;
+document.querySelectorAll(".hidden").forEach(e=>e.style.display="none");
 
+/* show node log */
+alert(logs[id] || "CORRUPTED NODE");
+
+/* tracking behavior */
+if(s.history.includes(id)){
+s.f += 1;
+document.getElementById("echo").innerText="REPEAT OBSERVATION DETECTED";
+}else{
+s.history.push(id);
 }
-save();
-update();
-}
 
-/* ===== CIPHER LOGIC ===== */
-/*
-CH names:
-CH1 INCIDENT REPORT -> I
-CH2 SECURITY FEED   -> S
-CH3 INTERNAL LOG    -> I
-CH4 FRACTURE EVENT  -> F
-
-sequence = ISIF
-reverse = FISI
-*/
-
-const answer="fisi";
-
-/* ===== PASSWORD SYSTEM ===== */
-
-function submitCode(){
-
-let val=document.getElementById("code").value.toLowerCase().replace(/\s/g,"");
-
-if(val===answer){
-s.f+=3;
-document.getElementById("system").innerText="ACCESS GRANTED // NORTH ECHO LINKED";
-}
-else{
-s.f+=0.2;
-document.getElementById("system").innerText="DENIED // OBSERVATION REGISTERED";
+/* escalation trigger */
+if(Math.random() < 0.2){
+document.getElementById("echo").innerText="LOG ALTERED AFTER VIEWING";
 }
 
 save();
 update();
 }
 
-/* ===== DOSSIER ===== */
+/* ================= DOSSIER ================= */
 
-function toggle(id){
-let e=document.getElementById(id);
-e.style.display=e.style.display==="block"?"none":"block";
+function toggleDossier(){
+let d=document.getElementById("dossier");
+d.style.display = d.style.display==="block"?"none":"block";
 s.v++;
 save();
 update();
 }
 
-/* ===== EVOLUTION ===== */
+/* ================= EVOLUTION SYSTEM ================= */
 
 function update(){
 
-let p=s.v+s.f;
-let st=document.getElementById("state");
+let p = s.v + s.f;
 
-if(p<5) st.innerText="STATUS: TRACE RESIDUE";
-else if(p<12) st.innerText="STATUS: SIGNAL ECHO";
-else if(p<20) st.innerText="STATUS: DISTRIBUTED ANOMALY";
+let st=document.getElementById("state");
+let mem=document.getElementById("memory");
+
+/* NORTH state evolution */
+if(p < 5) st.innerText="STATUS: TRACE RESIDUE";
+else if(p < 12) st.innerText="STATUS: SIGNAL ECHO";
+else if(p < 20) st.innerText="STATUS: DISTRIBUTED ANOMALY";
 else st.innerText="STATUS: NORTH AWARENESS ACTIVE";
+
+/* memory distortion */
+mem.innerText =
+"OBSERVATION LOG: " + JSON.stringify(s.history).slice(0,200);
+
+/* fake external system leakage */
+if(p > 12){
+mem.innerText += "\nREMOTE NODE: OFFLINE // SIGNAL LEAK DETECTED";
+}
+
+/* contradiction layer */
+if(Math.random() < 0.3){
+document.getElementById("echo").innerText =
+"WARNING: PREVIOUS LOGS MAY HAVE BEEN ALTERED";
+}
 
 save();
 }
 
-/* ===== SAVE ===== */
+/* ================= SAVE ================= */
 
 function save(){
-localStorage.setItem("NORTH_CIPHER",JSON.stringify(s));
+localStorage.setItem("NORTH_CORE",JSON.stringify(s));
 }
+
+/* INIT */
 
 update();
 
