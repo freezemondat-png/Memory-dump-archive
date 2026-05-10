@@ -1,215 +1,167 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>NORTH // DRONE COLONY ARCHIVE</title>
+<meta charset="UTF-8">
+<title>DD_ARCHIVE / RESTRICTED NODE</title>
 
 <style>
-body{
-margin:0;
-background:radial-gradient(circle at center,#05070c,#01010a 60%,#000);
-color:#d6e4ff;
-font-family:monospace;
-text-align:center;
+body {
+    margin: 0;
+    background: #040406;
+    color: #cfcfcf;
+    font-family: monospace;
+    overflow: hidden;
 }
 
-.wrap{max-width:900px;margin:40px auto;padding:20px}
-
-.panel{
-max-width:800px;
-margin:30px auto;
-padding:15px;
-border:1px solid #2a3a5f;
-background:rgba(10,15,25,0.65);
+#login {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
 
-.glitch{
-color:#7aa2ff;
-animation:f .09s infinite;
+input {
+    background: #000;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 10px;
+    width: 260px;
+    outline: none;
 }
 
-@keyframes f{
-0%{opacity:1}
-50%{opacity:.2}
-100%{opacity:1}
+button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #111;
+    color: #fff;
+    border: 1px solid #333;
+    cursor: pointer;
 }
 
-.section{
-border:1px solid #1d2b45;
-padding:10px;
-margin:10px 0;
-cursor:pointer;
-text-align:left;
+button:hover {
+    background: #222;
 }
 
-.hidden{
-display:none;
-margin-top:10px;
-border-left:2px solid #7aa2ff;
-padding:10px;
+#system {
+    display: none;
+    padding: 20px;
 }
 
-button{
-background:black;
-color:#d6e4ff;
-border:1px solid #4f7cff;
-padding:10px;
-margin:10px;
-cursor:pointer;
-font-family:monospace;
+.glitch {
+    animation: glitch 0.25s infinite;
+    color: #ff3b3b;
 }
 
-.corrupt{color:#ff6b6b}
-.small{font-size:12px;opacity:.6}
+@keyframes glitch {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    75% { transform: translate(2px, 0px); }
+    100% { transform: translate(0px, 0px); }
+}
+
+.hidden {
+    display: none;
+    color: #ff4d4d;
+}
+
+.log {
+    margin: 8px 0;
+    cursor: pointer;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
-
-<h1>COLONY NETWORK ARCHIVE</h1>
-<p class="glitch">UNKNOWN ENTITY SIGNAL DETECTED // DESIGNATION: NORTH</p>
-
-<div class="panel">
-
-<div class="section" onclick="node('ch1')">
-📁 NODE-01 INCIDENT REPORT
-<div class="hidden">Worker unit missing from assigned sector.</div>
+<div id="login">
+    <div>DD_ARCHIVE NODE // RESTRICTED ACCESS</div>
+    <br>
+    <div>ENTER AUTH KEY:</div>
+    <input id="key" placeholder="__________">
+    <br>
+    <button onclick="checkKey()">ACCESS</button>
+    <div id="msg"></div>
 </div>
 
-<div class="section" onclick="node('ch2')">
-📁 NODE-02 SECURITY FEED
-<div class="hidden">Camera loop corrupted: “it is already inside the system”</div>
-</div>
+<div id="system">
 
-<div class="section" onclick="node('ch3')">
-📁 NODE-03 CORE LOG
-<div class="hidden">Self-rewriting protocol detected in colony database.</div>
-</div>
+    <div class="glitch">ACCESS GRANTED // PARTIAL CORRUPTION DETECTED</div>
 
-<div class="section" onclick="node('ch4')">
-📁 NODE-04 FRACTURE EVENT
-<div class="hidden">Disassembly-class signal distributed across network grid.</div>
-</div>
+    <br>
 
-<button onclick="toggle('dossier')">ACCESS CLASSIFIED DRONE FILE</button>
+    <div>[LEVEL 1 UNLOCKED]</div>
+    <div class="log">LOG_01: SUBJECT DESIGNATION "NORTH" CONFIRMED</div>
+    <div class="log">LOG_02: MEMORY STABILITY BELOW 42%</div>
+    <div class="log">LOG_03: HEAT RESPONSE AVOIDANCE PATTERN DETECTED</div>
 
-<div id="dossier" class="hidden">
+    <br>
 
-<h2 class="glitch">ENTITY DOSSIER: NORTH</h2>
+    <div onclick="reveal2()" class="log glitch">
+        >> CORRUPTED SUBSYSTEM NODE DETECTED (CLICK)
+    </div>
 
-<p id="state">STATUS: INITIALIZING</p>
+    <div id="level2" class="hidden">
+        <br>
+        [LEVEL 2 UNLOCKED]
+        <div class="log">> FRAGMENT: "I keep forgetting what I was supposed to be"</div>
+        <div class="log">> FRAGMENT: "Do not overheat. Do not overheat. Do not—"</div>
 
-<p id="memory"></p>
+        <br>
 
-<p id="echo" class="corrupt"></p>
+        <div onclick="reveal3()" class="log glitch">
+            >> EMERGENCY MEMORY CORE (CLICK TO FORCE DECODE)
+        </div>
+    </div>
 
-</div>
+    <div id="level3" class="hidden">
+        <br>
+        [LEVEL 3 — CORE MEMORY FILE]
 
-</div>
+        <div class="glitch">
+        NORTH_CORE://
+        "If I forget everything… am I still me, or just what’s left running?"
+        </div>
+
+        <br>
+        SYSTEM NOTE:
+        <div class="log">THIS UNIT WAS NEVER MEANT TO BE RECOVERED.</div>
+    </div>
 
 </div>
 
 <script>
 
-/* ===== CORE DRONE ARG ENGINE ===== */
+// PASSWORD = hidden ARG clue
+// (You can scatter this in other pages later)
+let correctKey = "OVERHEAT";
 
-let s=JSON.parse(localStorage.getItem("DRONE_CORE")||"{}");
+function checkKey() {
+    let input = document.getElementById("key").value;
+    let msg = document.getElementById("msg");
 
-s.v||=0;
-s.f||=0;
-s.history||=[];
-s.seed||=Math.random()*10;
-
-s.v++;
-
-/* ===== NODE DATA ===== */
-
-const logs={
-ch1:"NODE-01: worker unit anomaly detected.",
-ch2:"NODE-02: surveillance feed corrupted.",
-ch3:"NODE-03: core rewriting self-adjusting parameters.",
-ch4:"NODE-04: disassembly-class entity signature: NORTH"
-};
-
-/* ===== NODE SYSTEM ===== */
-
-function node(id){
-
-document.querySelectorAll(".hidden").forEach(e=>e.style.display="none");
-
-alert(logs[id] || "DATA CORRUPTED");
-
-/* repetition detection */
-if(s.history.includes(id)){
-s.f += 1;
-document.getElementById("echo").innerText="REPEATED ACCESS PATTERN DETECTED";
-}else{
-s.history.push(id);
+    if (input.toUpperCase() === correctKey) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("system").style.display = "block";
+    } else {
+        msg.innerHTML = "ACCESS DENIED // INVALID KEY";
+        document.body.style.background = "#200000";
+        setTimeout(() => {
+            document.body.style.background = "#040406";
+        }, 300);
+    }
 }
 
-/* anomaly chance */
-if(Math.random()<0.25){
-document.getElementById("echo").innerText="LOG ALTERED AFTER OBSERVATION";
+function reveal2() {
+    document.getElementById("level2").classList.remove("hidden");
 }
 
-save();
-update();
+function reveal3() {
+    document.getElementById("level3").classList.remove("hidden");
+    document.body.style.background = "#000";
 }
-
-/* ===== DOSSIER TOGGLE ===== */
-
-function toggle(id){
-let e=document.getElementById(id);
-e.style.display=e.style.display==="block"?"none":"block";
-s.v++;
-save();
-update();
-}
-
-/* ===== EVOLUTION SYSTEM ===== */
-
-function update(){
-
-let p=s.v+s.f;
-
-let st=document.getElementById("state");
-let mem=document.getElementById("memory");
-
-/* escalating drone intelligence states */
-if(p<5) st.innerText="STATUS: TRACE SIGNAL";
-else if(p<12) st.innerText="STATUS: CORRUPTED FEED";
-else if(p<20) st.innerText="STATUS: DISTRIBUTED ENTITY";
-else st.innerText="STATUS: NORTH AWARENESS ACTIVE";
-
-/* memory distortion */
-mem.innerText =
-"COLONY LOG HISTORY: " + JSON.stringify(s.history).slice(0,200);
-
-/* external system illusion */
-if(p>12){
-mem.innerText += "\nOUTER GRID: OFFLINE // SIGNAL LEAKING FROM UNKNOWN NODE";
-}
-
-/* contradiction layer */
-if(Math.random()<0.3){
-document.getElementById("echo").innerText =
-"WARNING: PRIOR LOGS MAY HAVE BEEN ALTERED BY UNKNOWN ENTITY";
-}
-
-save();
-}
-
-/* ===== SAVE ===== */
-
-function save(){
-localStorage.setItem("DRONE_CORE",JSON.stringify(s));
-}
-
-/* INIT */
-
-update();
 
 </script>
 
