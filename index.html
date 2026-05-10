@@ -7,8 +7,8 @@
 <style>
 body{
 margin:0;
-background:#02030a;
-color:#d6e4ff;
+background:radial-gradient(circle at center,#050914,#02030a 60%,#000);
+color:#cfe2ff;
 font-family:monospace;
 text-align:center;
 }
@@ -19,8 +19,16 @@ margin:60px auto;
 padding:20px;
 }
 
+.panel{
+border:1px solid rgba(120,160,255,0.25);
+padding:18px;
+background:rgba(10,15,30,0.4);
+margin-top:20px;
+}
+
 .glitch{
-animation:g .15s infinite;
+animation:g .12s infinite;
+color:#7aa2ff;
 }
 
 @keyframes g{
@@ -32,31 +40,49 @@ animation:g .15s infinite;
 }
 
 button{
-background:black;
-color:#d6e4ff;
+background:rgba(0,0,0,0.7);
+color:#cfe2ff;
 border:1px solid #4f7cff;
-padding:10px;
-margin:6px;
+padding:10px 14px;
 cursor:pointer;
+margin:6px;
+}
+
+button:hover{
+border-color:#7aa2ff;
 }
 
 #log{
 white-space:pre-wrap;
 text-align:left;
-border:1px solid #1d2a44;
-padding:15px;
-margin-top:20px;
 display:none;
+margin-top:15px;
+padding:15px;
+border:1px solid rgba(120,160,255,0.2);
+background:rgba(0,0,0,0.4);
+}
+
+#hud{
+position:fixed;
+top:10px;
+left:10px;
+font-size:11px;
+opacity:0.7;
+line-height:1.6;
 }
 </style>
 </head>
 
 <body>
 
+<div id="hud"></div>
+
 <div class="wrap">
 
 <h1>HERO COMMISSION NETWORK</h1>
-<p>CLASSIFIED ARG SYSTEM // ENTITY: <span class="glitch">NORTH</span></p>
+<p class="glitch">CLASSIFIED ARG SYSTEM // ENTITY: NORTH</p>
+
+<div class="panel">
 
 <div id="scene"></div>
 <div id="buttons"></div>
@@ -64,33 +90,26 @@ display:none;
 
 </div>
 
-<script>
+</div>
 
-/* =========================
-   PERSISTENT ARG STATE
-========================= */
+<script>
 
 let state = JSON.parse(localStorage.getItem("north_arg")||"{}");
 
-state.progress ||= 0;
+state.node ||= 0;
 state.visits ||= 0;
 state.corruption ||= 0;
-state.phase ||= Math.floor(Date.now()/30000)%6;
 
 function save(){
 localStorage.setItem("north_arg",JSON.stringify(state));
 }
 
-/* =========================
-   WORLD PHASE SYSTEM
-========================= */
-
 function worldPhase(){
-let t = Math.floor(Date.now()/25000);
+let t = Math.floor(Date.now()/24000);
 let phases = [
 "DORMANT GRID",
 "SIGNAL DRIFT",
-"ARCHIVE DISTORTION",
+"ARCHIVE INSTABILITY",
 "CROSS NODE ECHO",
 "ENTITY RESONANCE",
 "FULL BREACH"
@@ -98,121 +117,59 @@ let phases = [
 return phases[t % phases.length];
 }
 
-/* =========================
-   NORTH ENTITY ENGINE
-========================= */
-
 function northState(){
-let power = state.visits + state.corruption;
-
-if(power < 5) return "UNKNOWN FILE FRAGMENT";
-if(power < 10) return "SIGNAL ECHO";
-if(power < 18) return "DISTRIBUTED PRESENCE";
-return "ACTIVE SYSTEM ANOMALY";
+let p = state.visits + state.corruption;
+if(p < 5) return "TRACE RESIDUE";
+if(p < 10) return "SIGNAL ECHO";
+if(p < 18) return "DISTRIBUTED PRESENCE";
+return "FULL SYSTEM ANOMALY";
 }
-
-/* =========================
-   ARG NODES (FULL STORY MAP)
-========================= */
 
 const nodes = [
-
-{
-text:`NODE 0 // ENTRY
-
-HERO COMMISSION ARCHIVE ACCESS GRANTED.
-
-A file exists that should not be here.`,
-next:1
-},
-
-{
-text:`NODE 1
-
-CLASSIFIED INCIDENT LOG:
-
-"...this hero was never registered..."`,
-next:2
-},
-
-{
-text:`NODE 2
-
-SYSTEM WARNING:
-
-Repeated anomaly detected across records.`,
-next:3
-},
-
-{
-text:`NODE 3
-
-OBSERVATION EFFECT DETECTED.
-
-THE SYSTEM IS RESPONDING TO YOU.`,
-next:4
-},
-
-{
-text:`NODE 4
-
-CROSS-NODE MATCH FOUND:
-
-Designation appears everywhere: NORTH`,
-next:5
-},
-
-{
-text:`NODE 5
-
-FINAL FILE AVAILABLE.`,
-next:6
-},
-
-{
-text:`NODE 6`
-}
-
+"NODE 0 // ARCHIVE ACCESS\n\nA file exists that should not be here.",
+"NODE 1 // INCIDENT LOG\n\nSubject appears without registry assignment.",
+"NODE 2 // SYSTEM WARNING\n\nRepeated anomaly across hero records.",
+"NODE 3 // OBSERVATION EFFECT\n\nThe system reacts when observed.",
+"NODE 4 // CONVERGENCE\n\nAll records point to:\nN O R T H",
+"DOSSIER READY"
 ];
-
-/* =========================
-   ENGINE RENDER
-========================= */
 
 const scene = document.getElementById("scene");
 const buttons = document.getElementById("buttons");
 const log = document.getElementById("log");
+const hud = document.getElementById("hud");
 
 function render(){
 
 buttons.innerHTML="";
 
-let node = nodes[state.progress];
+scene.innerText = nodes[state.node];
 
-scene.innerText = node.text;
+hud.innerText =
+`NODE: ${state.node}
+PHASE: ${worldPhase()}
+ENTITY: ${northState()}
+CORRUPTION: ${state.corruption.toFixed(1)}`;
 
-let btn = document.createElement("button");
-btn.innerText = state.progress < 6 ? "CONTINUE" : "VIEW DOSSIER";
+let b = document.createElement("button");
 
-btn.onclick = ()=>{
-state.progress++;
+if(state.node < nodes.length - 1){
+b.innerText = "CONTINUE";
+b.onclick = ()=>{
+state.node++;
 state.visits++;
-state.corruption += 0.8;
+state.corruption += 0.9;
 save();
 render();
 };
-
-buttons.appendChild(btn);
-
-if(state.progress === 6){
-dossier();
+}else{
+b.innerText = "OPEN DOSSIER";
+b.onclick = dossier;
 }
 
-}
+buttons.appendChild(b);
 
-/* =========================
-   FINAL DOSSIER
-========================= */
+}
 
 function dossier(){
 
@@ -226,24 +183,21 @@ log.innerText =
 SUBJECT: NORTH
 
 CLASSIFICATION:
-UNREGISTERED HERO ENTITY
+UNREGISTERED ENTITY
 
 STATUS:
 - persists across system records
 - increases under observation
-- cannot be fully contained
+- cannot be contained
 - appears across multiple nodes
 
-COMMISSION NOTE:
-
+NOTE:
 "This is not a hero being discovered.
-It is a system forming around him."
+It is a system forming self-awareness."
 
 END OF FILE`;
 
 }
-
-/* INIT */
 
 render();
 
