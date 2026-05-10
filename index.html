@@ -2,19 +2,22 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>HERO PUBLIC SAFETY COMMISSION // FILE 0-NORTH</title>
+<title>HERO FILE // NORTH</title>
 
 <style>
 body{
 margin:0;
-background:#05070c;
-color:#d8e1ff;
+background:#050814;
+color:#dbe7ff;
 font-family:monospace;
 overflow:hidden;
+text-align:center;
 }
 
+.hidden{display:none}
+
 .glitch{
-animation:g .12s infinite;
+animation:g .2s infinite;
 }
 
 @keyframes g{
@@ -25,339 +28,166 @@ animation:g .12s infinite;
 100%{transform:translate(0)}
 }
 
-canvas{display:block}
-
-#ui{
-position:fixed;
-top:10px;
-left:10px;
-font-size:12px;
-opacity:0.75;
-white-space:pre;
-}
-
 button{
-background:#000814;
-color:#d8e1ff;
-border:1px solid #3b5bdb;
-padding:10px;
-margin:5px;
+background:#000;
+color:#dbe7ff;
+border:1px solid #4a6cf7;
+padding:12px;
+margin:6px;
 cursor:pointer;
 }
 
-#header{
-position:fixed;
-top:0;
-width:100%;
-padding:10px;
-background:#02030a;
-border-bottom:1px solid #1c2a4a;
+#box{
+margin-top:120px;
+padding:20px;
+}
+
+#hint{
+opacity:0.5;
 font-size:12px;
-opacity:0.9;
+margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="header">
-HERO PUBLIC SAFETY COMMISSION // RESTRICTED FILE ACCESS // LEVEL 5 CLEARANCE REQUIRED
+<div id="box">
+
+<h1>HERO PUBLIC SAFETY COMMISSION</h1>
+<p>RESTRICTED FILE: <span class="glitch">NORTH</span></p>
+
+<div id="scene"></div>
+
+<div id="buttons"></div>
+
+<div id="hint"></div>
+
 </div>
 
-<div id="ui"></div>
-
-<pre id="t"></pre>
-<canvas id="c"></canvas>
-
 <script>
-/* =========================
-   PERSISTENT HERO FILE SYSTEM
-========================= */
 
-let save = JSON.parse(localStorage.getItem("north_hero_file")||"{}");
+/* ======================
+   SIMPLE ARG STATE
+====================== */
 
-save.access ||= 0;
-save.interactions ||= 0;
-save.anomaly ||= 0;
-save.corruption ||= 0;
-save.stage ||= 0;
-save.last ||= Date.now();
+let step = 0;
+let clicks = 0;
 
-let offline = Date.now() - save.last;
-if(offline > 8000){
-save.corruption += Math.floor(offline/8000);
+const scene = document.getElementById("scene");
+const buttons = document.getElementById("buttons");
+const hint = document.getElementById("hint");
+
+/* ======================
+   PUZZLE TEXT SYSTEM
+====================== */
+
+function show(text){
+scene.innerHTML = "<p>"+text+"</p>";
 }
 
-save.last = Date.now();
+/* ======================
+   STEP SYSTEM
+====================== */
 
-function commit(){
-save.last = Date.now();
-localStorage.setItem("north_hero_file",JSON.stringify(save));
+function render(){
+
+buttons.innerHTML = "";
+
+if(step === 0){
+show("FILE OPENED... BUT SOME DATA IS MISSING.");
+
+addButton("TRY TO READ FILE", next);
+hint.innerText="Something is hidden in the missing parts.";
 }
 
-/* =========================
-   CORE SYSTEM
-========================= */
+if(step === 1){
+show("SUBJECT: NORTH\nSTATUS: UNKNOWN HERO TYPE\n\nONE LINE IS CORRUPTED.");
 
-let t=document.getElementById("t");
-let c=document.getElementById("c");
-let ctx=c.getContext("2d");
-let ui=document.getElementById("ui");
-
-c.width=innerWidth;
-c.height=innerHeight;
-
-/* =========================
-   HERO COMMISSION “AI ANALYSIS”
-========================= */
-
-function heroAI(){
-if(save.interactions < 10) return "UNSCANNED";
-if(save.interactions < 25) return "POTENTIAL THREAT";
-if(save.corruption < 20) return "ANOMALOUS HERO-LIKE ENTITY";
-return "CLASSIFIED: UNSTABLE PROTOTYPE HERO";
+addButton("FIX THE LINE", next);
+hint.innerText="Not everything is supposed to be read directly.";
 }
 
-/* =========================
-   GLITCH TEXT
-========================= */
+if(step === 2){
+show("CORRUPTED LINE REVEALED:\n\n'I never wanted to be a hero like this.'");
 
-function glitchText(el,text){
-let chars="NORTH//ERROR//CLASSIFIED//???";
-let i=0;
-
-let interval=setInterval(()=>{
-el.innerText=text.split("")
-.map((c,idx)=>idx<i?text[idx]:chars[Math.random()*chars.length|0])
-.join("");
-
-i+=0.2;
-
-if(i>=text.length){
-clearInterval(interval);
-save.corruption++;
-commit();
-}
-},25);
+addButton("CONTINUE", next);
+hint.innerText="Why would a hero file say that?";
 }
 
-/* =========================
-   HERO SYSTEM BOOT
-========================= */
+if(step === 3){
+show("A MESSAGE APPEARS:\n\nIF YOU ARE READING THIS... YOU ARE BEING OBSERVED.");
 
-function boot(){
-save.stage=1;
-
-glitchText(t,
-`HERO PUBLIC SAFETY COMMISSION DATABASE ACCESS
-
-FILE ID: 0-NORTH
-STATUS: SEALED HERO RECORD
-
-WARNING:
-SUBJECT DOES NOT MATCH STANDARD HERO CLASSIFICATION`
-);
-
-setTimeout(feed,3500);
+addButton("LOOK AROUND", next);
+hint.innerText="Try interacting more...";
 }
 
-/* =========================
-   LIVE HERO SURVEILLANCE FEED
-========================= */
+if(step === 4){
+show("NEW FILE UNLOCKED:\n\nNORTH WAS NEVER REGISTERED.\nHE WAS LEFT INSIDE THE SYSTEM.");
 
-function feed(){
-save.stage=2;
-t.style.display="none";
-
-function draw(){
-ctx.fillStyle="#05070c";
-ctx.fillRect(0,0,c.width,c.height);
-
-ctx.fillStyle="#6ea8fe";
-ctx.font="18px monospace";
-
-ctx.fillText("HERO SURVEILLANCE FEED // SECTOR 9",40,50);
-
-ctx.fillStyle="#a5b4fc";
-ctx.fillText("SUBJECT: NORTH (UNREGISTERED HERO TYPE)",40,90);
-
-if(save.interactions > 10){
-ctx.fillStyle="#ff4d6d";
-ctx.fillText("WARNING: SUBJECT RESPONDS TO OBSERVATION",40,130);
+addButton("OPEN FINAL FILE", next);
+hint.innerText="Final choice incoming.";
 }
 
-if(save.corruption > 15){
-ctx.fillStyle="red";
-ctx.fillText("DATA BREACH DETECTED",40,170);
+if(step === 5){
+show("<span class='glitch'>NORTH ACTIVE</span>\n\nA hero who was never officially allowed to exist.");
+
+addButton("ACCEPT AS HERO", endAccept);
+addButton("SEAL FILE", endSeal);
+
+hint.innerText="Your choice changes the record.";
 }
 
-if(Math.random() < save.interactions/300){
-ctx.fillStyle="white";
-ctx.fillText("?? NORTH SIGNAL DETECTED ??",40+Math.random()*10,220);
 }
 
-requestAnimationFrame(draw);
-}
-draw();
+/* ======================
+   BUTTON HELPERS
+====================== */
 
-/* observer effect */
-document.onmousemove=e=>{
-save.interactions++;
-
-if(Math.random()>0.94){
-let d=document.createElement("div");
-d.innerText="NORTH TRACE";
-d.style.position="absolute";
-d.style.left=e.pageX+"px";
-d.style.top=e.pageY+"px";
-d.style.color="#ff4d6d";
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),600);
-}
-
-commit();
-updateUI();
-};
-
-setTimeout(logs,6000);
-}
-
-/* =========================
-   SEALED HERO FILE LOGS
-========================= */
-
-function logs(){
-save.stage=3;
-
-c.style.display="none";
-t.style.display="block";
-
-glitchText(t,
-`HERO FILE REPORT: 0-NORTH
-
-STATUS: EXPERIMENTAL HERO PROTOTYPE
-
-ABILITIES:
-- unknown adaptive combat system
-- emotional stabilization failure
-- memory corruption under stress
-
-NOTE:
-"subject behaves like a hero... but was never registered as one"
-
-CLASSIFICATION: DO NOT PUBLIC RELEASE
-`);
-setTimeout(watch,5000);
-}
-
-/* =========================
-   OBSERVATION PHASE
-========================= */
-
-function watch(){
-save.stage=4;
-t.style.display="none";
-
-document.onmousemove=e=>{
-save.interactions++;
-
-if(Math.random()>0.95){
-let d=document.createElement("div");
-d.innerText="N";
-d.style.position="absolute";
-d.style.left=e.pageX+"px";
-d.style.top=e.pageY+"px";
-d.style.color="red";
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),500);
-}
-
-commit();
-updateUI();
-};
-
+function addButton(text, fn){
 let b=document.createElement("button");
-b.innerText="UNSEAL HERO FILE";
-b.onclick=archive;
-document.body.appendChild(b);
+b.innerText=text;
+b.onclick=fn;
+buttons.appendChild(b);
 }
 
-/* =========================
-   ARCHIVE REVEAL
-========================= */
+/* ======================
+   PROGRESSION
+====================== */
 
-function archive(){
-save.stage=5;
+function next(){
+step++;
+clicks++;
+render();
+}
 
+/* ======================
+   ENDINGS
+====================== */
+
+function endAccept(){
 document.body.innerHTML=`
-<pre>
-HERO COMMISSION ARCHIVE
-
-SUBJECT: NORTH
-TYPE: DISASSEMBLY-CLASS HERO PROTOTYPE
-
-STATUS: SEALED INCIDENT
-
-"${save.interactions > 20 ?
-"this file is reacting to you"
-:
-"this hero should not exist in active records"}"
-</pre>
-
-<button onclick="finale()">FINAL CLEARANCE</button>
+<div id="box">
+<h1>FILE UPDATED</h1>
+<p>NORTH HAS BEEN REGISTERED AS A HERO.</p>
+<p class="glitch">BUT THE SYSTEM STILL KEEPS A COPY.</p>
+</div>
 `;
 }
 
-/* =========================
-   FINAL HERO REVEAL
-========================= */
-
-function finale(){
-save.stage=6;
-
+function endSeal(){
 document.body.innerHTML=`
-<h1 class="glitch">FILE 0-NORTH ACTIVE</h1>
-
-<p>
-A hero-class entity that was never officially registered.<br>
-Standing between hero and anomaly classification.<br><br>
-
-"I was made to protect... but never allowed to exist."
-</p>
-
-<button onclick="choice('accept')">REINSTATE AS HERO</button>
-<button onclick="choice('reject')">PERMANENT SEAL</button>
+<div id="box">
+<h1>FILE SEALED</h1>
+<p>NORTH HAS BEEN ERASED FROM PUBLIC RECORD.</p>
+<p class="glitch">BUT SOMETHING IS STILL RUNNING.</p>
+</div>
 `;
-
-window.choice=function(c){
-if(c==="accept"){
-document.body.innerHTML=
-"<h1>RECLASSIFIED</h1><p>NORTH ENTERED HERO SYSTEM</p>";
-}else{
-document.body.innerHTML=
-"<h1>SEALED</h1><p>HERO FILE STILL ACTIVE UNDER REDACTION</p>";
-}
-};
-
-commit();
 }
 
-/* =========================
-   UI
-========================= */
+/* start */
+render();
 
-function updateUI(){
-ui.innerText=
-`HERO SYSTEM STATUS
-CLEARANCE: RESTRICTED
-FILE ACCESS LEVEL: ${save.stage}
-OBSERVATION COUNT: ${save.interactions}
-CORRUPTION INDEX: ${save.corruption}
-CLASSIFICATION: ${heroAI()}`;
-}
-
-updateUI();
-boot();
 </script>
 
 </body>
