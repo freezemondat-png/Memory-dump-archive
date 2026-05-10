@@ -57,7 +57,133 @@ function northSpeak() {
     ) || voices[0];
 
     speechSynthesis.speak(msg);
+let corruptionLevel = 0;
 
+// ==========================
+// 🧠 SYSTEM AI (WDF ARCHIVE)
+// ==========================
+
+function systemAI(eventType) {
+    let response = "";
+
+    const low = [
+        "SYSTEM STATUS: STABLE. MONITORING CONTINUES.",
+        "NO ANOMALIES DETECTED IN CURRENT NODE.",
+        "ARCHIVE LAYER REMAINS WITHIN EXPECTED PARAMETERS."
+    ];
+
+    const mid = [
+        "WARNING: MEMORY FRAGMENTATION INCREASED.",
+        "UNREGISTERED SIGNAL TRACE DETECTED: POSSIBLE 'NORTH' ECHO.",
+        "SYSTEM COMPENSATION REQUIRED. DO NOT IGNORE DRIFT."
+    ];
+
+    const high = [
+        "CRITICAL: CORE MEMORY STRUCTURE COMPROMISED.",
+        "NORTH DESIGNATION IS NO LONGER CONTAINED.",
+        "YOU ARE NOT AUTHORIZED TO CONTINUE OBSERVATION."
+    ];
+
+    if (corruptionLevel < 3) {
+        response = low[Math.floor(Math.random() * low.length)];
+    } else if (corruptionLevel < 6) {
+        response = mid[Math.floor(Math.random() * mid.length)];
+    } else {
+        response = high[Math.floor(Math.random() * high.length)];
+    }
+
+    showAI(response);
+}
+
+// ==========================
+// 📡 DISPLAY AI RESPONSE
+// ==========================
+
+function showAI(text) {
+    let div = document.createElement("div");
+    div.className = "node corrupt";
+    div.innerText = "AI_SYSTEM: " + text;
+    document.getElementById("terminal").prepend(div);
+
+    setTimeout(() => div.remove(), 8000);
+}
+
+// ==========================
+// 🔥 CORRUPTION ENGINE
+// ==========================
+
+function increaseCorruption(amount) {
+    corruptionLevel += amount;
+
+    // system reacts immediately
+    systemAI();
+
+    // visual instability tied to meaning
+    if (corruptionLevel > 4) {
+        document.body.style.background = "#120000";
+    }
+
+    if (corruptionLevel > 7) {
+        document.body.classList.add("corrupt");
+        triggerNorthLeak();
+    }
+}
+
+// ==========================
+// 🔊 AUDIO HALLUCINATION
+// ==========================
+
+function playHallucination() {
+    let msg = new SpeechSynthesisUtterance(
+        "I am still running... even if I shouldn't be."
+    );
+
+    msg.rate = 0.78;
+    msg.pitch = 0.35;
+    msg.volume = 0.7;
+
+    speechSynthesis.speak(msg);
+
+    // fake “echo layer”
+    setTimeout(() => {
+        let echo = new SpeechSynthesisUtterance(
+            "...still running... still running..."
+        );
+        echo.rate = 1.1;
+        echo.pitch = 0.2;
+        echo.volume = 0.4;
+        speechSynthesis.speak(echo);
+    }, 700);
+}
+
+// ==========================
+// 🧠 NORTH LEAK EVENT
+// ==========================
+
+function triggerNorthLeak() {
+    let leak = document.createElement("div");
+    leak.className = "node restricted corrupt";
+    leak.innerText =
+        "NORTH_ECHO: \"If I stop thinking, do I disappear completely?\"";
+
+    document.getElementById("terminal").prepend(leak);
+
+    playHallucination();
+}
+
+// ==========================
+// 📡 HOOK SYSTEM INTO EVENTS
+// ==========================
+
+// corruption grows over time (system instability simulation)
+setInterval(() => {
+    increaseCorruption(1);
+}, 5000);
+
+// random AI “thoughts”
+setInterval(() => {
+    systemAI();
+}, 7000);
     // visual corruption sync (MD feel)
     let glitch = setInterval(() => {
         document.body.style.opacity = Math.random() > 0.85 ? "0.6" : "1";
