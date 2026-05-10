@@ -32,7 +32,6 @@ padding:10px;
 margin:10px 0;
 cursor:pointer;
 text-align:left;
-opacity:.7;
 }
 
 .hidden{
@@ -61,29 +60,31 @@ font-family:monospace;
 <div class="wrap">
 
 <h1>HERO COMMISSION ARCHIVE</h1>
-<p class="glitch">SYSTEM OBSERVATION ACTIVE // NORTH DETECTED</p>
+<p class="glitch">NORTH OBSERVATION PROTOCOL ACTIVE</p>
 
 <div class="panel">
 
 <div id="ch1" class="section" onclick="openNode('ch1')">
 📁 INCIDENT REPORT
-<div class="hidden">Subject appears without origin record.</div>
+<div class="hidden">“Subject leaves no origin trace.”</div>
 </div>
 
 <div id="ch2" class="section" onclick="openNode('ch2')">
 📁 SECURITY FEED
-<div class="hidden">Audio: “you are not the first observer”</div>
+<div class="hidden">“it sees even when not observed”</div>
 </div>
 
 <div id="ch3" class="section" onclick="openNode('ch3')">
 📁 INTERNAL LOG
-<div class="hidden">System rewriting increases under repeated attention cycles.</div>
+<div class="hidden">Rewritten entries detected after repeated access cycles.</div>
 </div>
 
 <div id="ch4" class="section" onclick="openNode('ch4')">
 📁 FRACTURE EVENT
-<div class="hidden">N O R T H distributed across all known archives.</div>
+<div class="hidden">N O R T H distributed across system layers.</div>
 </div>
+
+<br>
 
 <button onclick="toggle('dossier')">🔒 DOSSIER ACCESS</button>
 
@@ -91,11 +92,13 @@ font-family:monospace;
 
 <h2 class="glitch">DOSSIER: NORTH</h2>
 
-<p><b id="state">STATUS: INITIALIZING</b></p>
+<p id="state">STATUS: INITIALIZING</p>
 
-<p id="memory"></p>
-
-<p class="small corrupt" id="echo"></p>
+<p class="small" id="hint">
+Cipher Layer Active:
+Take the first letter of each CH file title.
+Then reverse the sequence.
+</p>
 
 </div>
 
@@ -104,7 +107,7 @@ font-family:monospace;
 <input id="code" placeholder="ENTER ACCESS KEY">
 <button onclick="submitCode()">SUBMIT</button>
 
-<p class="small" id="system"></p>
+<p id="system" class="small"></p>
 
 </div>
 
@@ -114,45 +117,20 @@ font-family:monospace;
 
 /* ===== CORE STATE ===== */
 
-let s=JSON.parse(localStorage.getItem("NORTH_CORE")||"{}");
+let s=JSON.parse(localStorage.getItem("NORTH_CIPHER")||"{}");
 
 s.v||=0;
 s.f||=0;
 s.phase||=0;
-s.seed||=Math.random()*10;
-s.history||=[];
 
 s.v++;
 
-/* ===== TIME SHIFT LAYER ===== */
-
-let timeFactor = Math.floor(Date.now()/30000)%5;
-
-/* ===== PSEUDO RANDOMIZED VARIATION (REPLAY DIFFERENCE) ===== */
-
-function variant(text){
-if((s.seed+s.v)%3===0) return text.split("").reverse().join("");
-if((s.seed+s.v)%5===0) return text.replace("system","structure");
-return text;
-}
-
-/* ===== NODE SYSTEM ===== */
+/* ===== NODE CONTROL ===== */
 
 function openNode(id){
-
 let el=document.getElementById(id);
-let now=Date.now();
 
-/* timing + order influence */
-if(!s.lastClick) s.lastClick=now;
-let delay=now - s.lastClick;
-s.lastClick=now;
-
-/* NORTH reacts to rapid vs slow interaction */
-if(delay<800) s.f+=1;
-if(delay>5000) s.f+=0.5;
-
-/* progression requires order + state */
+/* progression lock */
 if((id==="ch1" && s.phase===0)||
 (id==="ch2" && s.phase===1)||
 (id==="ch3" && s.phase===2)||
@@ -163,13 +141,38 @@ el.querySelector(".hidden").style.display="block";
 s.phase++;
 s.v++;
 
-s.history.push(id);
-
+}
+save();
+update();
 }
 
-/* contradiction injection */
-if(Math.random()<0.15){
-s.history.push("ANOMALY_ECHO");
+/* ===== CIPHER LOGIC ===== */
+/*
+CH names:
+CH1 INCIDENT REPORT -> I
+CH2 SECURITY FEED   -> S
+CH3 INTERNAL LOG    -> I
+CH4 FRACTURE EVENT  -> F
+
+sequence = ISIF
+reverse = FISI
+*/
+
+const answer="fisi";
+
+/* ===== PASSWORD SYSTEM ===== */
+
+function submitCode(){
+
+let val=document.getElementById("code").value.toLowerCase().replace(/\s/g,"");
+
+if(val===answer){
+s.f+=3;
+document.getElementById("system").innerText="ACCESS GRANTED // NORTH ECHO LINKED";
+}
+else{
+s.f+=0.2;
+document.getElementById("system").innerText="DENIED // OBSERVATION REGISTERED";
 }
 
 save();
@@ -181,57 +184,22 @@ update();
 function toggle(id){
 let e=document.getElementById(id);
 e.style.display=e.style.display==="block"?"none":"block";
-
 s.v++;
 save();
 update();
 }
 
-/* ===== CODE PUZZLE GATE ===== */
-
-function submitCode(){
-let val=document.getElementById("code").value.toLowerCase();
-
-if(val==="north"){
-s.f+=2;
-document.getElementById("system").innerText="ACCESS GRANTED // ECHO DETECTED";
-}
-else{
-document.getElementById("system").innerText="DENIED // OBSERVATION REGISTERED";
-s.f+=0.2;
-}
-
-save();
-update();
-}
-
-/* ===== NORTH EVOLUTION SYSTEM ===== */
+/* ===== EVOLUTION ===== */
 
 function update(){
 
 let p=s.v+s.f;
 let st=document.getElementById("state");
-let mem=document.getElementById("memory");
-let echo=document.getElementById("echo");
 
-/* escalation phases */
 if(p<5) st.innerText="STATUS: TRACE RESIDUE";
 else if(p<12) st.innerText="STATUS: SIGNAL ECHO";
-else if(p<20) st.innerText="STATUS: DISTRIBUTED ENTITY";
+else if(p<20) st.innerText="STATUS: DISTRIBUTED ANOMALY";
 else st.innerText="STATUS: NORTH AWARENESS ACTIVE";
-
-/* memory distortion */
-mem.innerText = variant("Recorded interactions: "+JSON.stringify(s.history).slice(0,180));
-
-/* contradiction layer */
-if(s.history.length>4 && Math.random()<0.4){
-echo.innerText="NOTE: previous logs have been altered after observation.";
-}
-
-/* external world illusion */
-if(s.phase>2){
-document.getElementById("system").innerText="REMOTE ARCHIVE NODE: OFFLINE // SIGNAL LEAK DETECTED";
-}
 
 save();
 }
@@ -239,10 +207,8 @@ save();
 /* ===== SAVE ===== */
 
 function save(){
-localStorage.setItem("NORTH_CORE",JSON.stringify(s));
+localStorage.setItem("NORTH_CIPHER",JSON.stringify(s));
 }
-
-/* INIT */
 
 update();
 
