@@ -2,23 +2,23 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>HERO FILE // NORTH</title>
+<title>HERO COMMISSION ARG ENGINE // NORTH PROTOCOL</title>
 
 <style>
 body{
 margin:0;
-background:#050814;
-color:#dbe7ff;
+background:#02030a;
+color:#d7e6ff;
 font-family:monospace;
-overflow:hidden;
-text-align:center;
 }
 
-.hidden{display:none}
-
-.glitch{
-animation:g .2s infinite;
+#app{
+max-width:800px;
+margin:60px auto;
+padding:20px;
 }
+
+.glitch{animation:g .15s infinite}
 
 @keyframes g{
 0%{transform:translate(0)}
@@ -29,163 +29,241 @@ animation:g .2s infinite;
 }
 
 button{
-background:#000;
-color:#dbe7ff;
-border:1px solid #4a6cf7;
-padding:12px;
+background:black;
+color:#d7e6ff;
+border:1px solid #4c7dff;
+padding:10px;
 margin:6px;
 cursor:pointer;
 }
 
-#box{
-margin-top:120px;
-padding:20px;
+#log{
+white-space:pre-wrap;
+border:1px solid #1d2a4a;
+padding:15px;
+margin-top:20px;
 }
 
-#hint{
-opacity:0.5;
+#meta{
 font-size:12px;
-margin-top:20px;
+opacity:0.6;
+margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="box">
+<div id="app">
 
-<h1>HERO PUBLIC SAFETY COMMISSION</h1>
-<p>RESTRICTED FILE: <span class="glitch">NORTH</span></p>
+<h1>ARG ENGINE // HERO COMMISSION NETWORK</h1>
+<p>Protocol: <span class="glitch">NORTH</span></p>
 
 <div id="scene"></div>
-
 <div id="buttons"></div>
-
-<div id="hint"></div>
+<div id="log"></div>
+<div id="meta"></div>
 
 </div>
 
 <script>
 
-/* ======================
-   SIMPLE ARG STATE
-====================== */
+/* =========================
+   ARG ENGINE ARCHITECTURE
+   (THIS is what scales forever)
+========================= */
 
-let step = 0;
-let clicks = 0;
+/*
+CORE SYSTEM LAYERS:
 
-const scene = document.getElementById("scene");
-const buttons = document.getElementById("buttons");
-const hint = document.getElementById("hint");
+1. STATE LAYER (who the player is)
+2. WORLD LAYER (global ARG timeline)
+3. ENTITY LAYER (NORTH behavior)
+4. CONTENT LAYER (story nodes)
+5. TRIGGER LAYER (puzzles & conditions)
+*/
 
-/* ======================
-   PUZZLE TEXT SYSTEM
-====================== */
+/* =========================
+   STATE LAYER
+========================= */
 
-function show(text){
-scene.innerHTML = "<p>"+text+"</p>";
+let state = JSON.parse(localStorage.getItem("north_engine")||"{}");
+
+state.id ||= "NODE-" + Math.floor(Math.random()*999999);
+state.progress ||= 0;
+state.choices ||= 0;
+state.observations ||= 0;
+state.corruption ||= 0;
+state.timeSeed ||= Date.now();
+
+function save(){
+localStorage.setItem("north_engine",JSON.stringify(state));
 }
 
-/* ======================
-   STEP SYSTEM
-====================== */
+/* =========================
+   WORLD LAYER (GLOBAL FEEL)
+========================= */
 
-function render(){
-
-buttons.innerHTML = "";
-
-if(step === 0){
-show("FILE OPENED... BUT SOME DATA IS MISSING.");
-
-addButton("TRY TO READ FILE", next);
-hint.innerText="Something is hidden in the missing parts.";
+function worldState(){
+let t = Math.floor(Date.now()/30000);
+return {
+cycle: t % 6,
+event: ["Dormant","Signal Drift","Leak Detected","Cross-Node Echo","Entity Stirring","Full Resonance"][t%6]
+};
 }
 
-if(step === 1){
-show("SUBJECT: NORTH\nSTATUS: UNKNOWN HERO TYPE\n\nONE LINE IS CORRUPTED.");
+/* =========================
+   ENTITY LAYER (NORTH)
+========================= */
 
-addButton("FIX THE LINE", next);
-hint.innerText="Not everything is supposed to be read directly.";
+function northEntity(){
+
+let power = state.observations + state.corruption;
+
+if(power < 5) return "UNKNOWN ANOMALY";
+if(power < 10) return "UNSTABLE SIGNAL";
+if(power < 20) return "DISTRIBUTED PRESENCE";
+return "FULL ENTITY RESONANCE";
 }
 
-if(step === 2){
-show("CORRUPTED LINE REVEALED:\n\n'I never wanted to be a hero like this.'");
+/* =========================
+   CONTENT LAYER (ARG NODES)
+========================= */
 
-addButton("CONTINUE", next);
-hint.innerText="Why would a hero file say that?";
+const nodes = [
+
+{
+text:"HERO COMMISSION ARCHIVE NODE FOUND.\n\nA file exists that should not be accessible.",
+options:[
+["OPEN FILE",1]
+]
+},
+
+{
+text:"FILE FRAGMENT:\n\n'...this hero classification was never approved...'",
+options:[
+["DEEP SCAN",2]
+]
+},
+
+{
+text:"WARNING:\n\nOBSERVATION DETECTED.\nTHE SYSTEM IS RESPONDING.",
+options:[
+["CONTINUE",3],
+["STOP",3]
+]
+},
+
+{
+text:"MULTIPLE NETWORKS REPORT SAME SIGNATURE.\n\nENTITY: NORTH",
+options:[
+["TRACE SIGNAL",4]
+]
+},
+
+{
+text:"SIGNAL STABILIZING...\n\nYOU ARE CLOSE TO THE CORE RECORD.",
+options:[
+["FINAL ACCESS",5]
+]
+},
+
+{
+text:"CLASSIFIED DOSSIER READY.",
+options:[
+["OPEN DOSSIER",6]
+]
+},
+
+{
+text:"END NODE"
 }
 
-if(step === 3){
-show("A MESSAGE APPEARS:\n\nIF YOU ARE READING THIS... YOU ARE BEING OBSERVED.");
+];
 
-addButton("LOOK AROUND", next);
-hint.innerText="Try interacting more...";
-}
+/* =========================
+   TRIGGER SYSTEM
+========================= */
 
-if(step === 4){
-show("NEW FILE UNLOCKED:\n\nNORTH WAS NEVER REGISTERED.\nHE WAS LEFT INSIDE THE SYSTEM.");
-
-addButton("OPEN FINAL FILE", next);
-hint.innerText="Final choice incoming.";
-}
-
-if(step === 5){
-show("<span class='glitch'>NORTH ACTIVE</span>\n\nA hero who was never officially allowed to exist.");
-
-addButton("ACCEPT AS HERO", endAccept);
-addButton("SEAL FILE", endSeal);
-
-hint.innerText="Your choice changes the record.";
-}
-
-}
-
-/* ======================
-   BUTTON HELPERS
-====================== */
-
-function addButton(text, fn){
-let b=document.createElement("button");
-b.innerText=text;
-b.onclick=fn;
-buttons.appendChild(b);
-}
-
-/* ======================
-   PROGRESSION
-====================== */
-
-function next(){
-step++;
-clicks++;
+function trigger(action){
+state.choices++;
+state.corruption += Math.random()*2;
+state.observations += 1;
+state.progress = action;
+save();
 render();
 }
 
-/* ======================
-   ENDINGS
-====================== */
+/* =========================
+   RENDER ENGINE
+========================= */
 
-function endAccept(){
-document.body.innerHTML=`
-<div id="box">
-<h1>FILE UPDATED</h1>
-<p>NORTH HAS BEEN REGISTERED AS A HERO.</p>
-<p class="glitch">BUT THE SYSTEM STILL KEEPS A COPY.</p>
-</div>
-`;
+const scene = document.getElementById("scene");
+const buttons = document.getElementById("buttons");
+const log = document.getElementById("log");
+const meta = document.getElementById("meta");
+
+function render(){
+
+buttons.innerHTML="";
+
+let world = worldState();
+
+let node = nodes[state.progress];
+
+scene.innerText = node.text;
+
+meta.innerText =
+`ID: ${state.id}
+PROGRESS: ${state.progress}
+WORLD STATE: ${world.event}
+ENTITY STATE: ${northEntity()}`;
+
+/* build options */
+(node.options||[]).forEach(o=>{
+let b=document.createElement("button");
+b.innerText=o[0];
+b.onclick=()=>trigger(o[1]);
+buttons.appendChild(b);
+});
+
+if(state.progress===6){
+showDossier();
 }
 
-function endSeal(){
-document.body.innerHTML=`
-<div id="box">
-<h1>FILE SEALED</h1>
-<p>NORTH HAS BEEN ERASED FROM PUBLIC RECORD.</p>
-<p class="glitch">BUT SOMETHING IS STILL RUNNING.</p>
-</div>
-`;
 }
 
-/* start */
+/* =========================
+   FINAL DOSSIER (NORTH REVEAL)
+========================= */
+
+function showDossier(){
+
+buttons.innerHTML="";
+
+log.innerText=
+`HERO COMMISSION DOSSIER
+
+SUBJECT: NORTH
+
+CLASSIFICATION:
+UNREGISTERED HERO ENTITY
+
+STATUS:
+- persists across system cycles
+- appears in multiple network states
+- increases resonance under observation
+
+NOTE:
+"This is not a hero being discovered.
+It is a system forming around him."
+
+END OF FILE`;
+
+}
+
+/* INIT */
+
 render();
 
 </script>
