@@ -14,7 +14,7 @@ text-align:center;
 }
 
 .wrap{
-max-width:800px;
+max-width:900px;
 margin:60px auto;
 padding:20px;
 }
@@ -94,82 +94,172 @@ line-height:1.6;
 
 <script>
 
-let state = JSON.parse(localStorage.getItem("north_arg")||"{}");
+/* =========================
+   LONG-FORM ARG STATE ENGINE
+========================= */
 
-state.node ||= 0;
+let state = JSON.parse(localStorage.getItem("north_long")||"{}");
+
+state.chapter ||= 0;
+state.layer ||= 0;
 state.visits ||= 0;
 state.corruption ||= 0;
+state.timeSeed ||= Date.now();
 
 function save(){
-localStorage.setItem("north_arg",JSON.stringify(state));
+localStorage.setItem("north_long",JSON.stringify(state));
 }
 
+/* =========================
+   WORLD EVOLUTION SYSTEM (MONTHS SCALE)
+========================= */
+
 function worldPhase(){
-let t = Math.floor(Date.now()/24000);
+let day = Math.floor(Date.now()/86400000); // real days
+
 let phases = [
 "DORMANT GRID",
 "SIGNAL DRIFT",
 "ARCHIVE INSTABILITY",
 "CROSS NODE ECHO",
 "ENTITY RESONANCE",
-"FULL BREACH"
+"BREACH EVENT",
+"CONTAINMENT FAILURE",
+"SYSTEM REWRITE",
+"UNKNOWN LOOP"
 ];
-return phases[t % phases.length];
+
+return phases[day % phases.length];
 }
+
+/* =========================
+   NORTH ENTITY LONG EVOLUTION
+========================= */
 
 function northState(){
-let p = state.visits + state.corruption;
-if(p < 5) return "TRACE RESIDUE";
-if(p < 10) return "SIGNAL ECHO";
-if(p < 18) return "DISTRIBUTED PRESENCE";
-return "FULL SYSTEM ANOMALY";
+
+let power = state.visits + state.corruption + state.chapter;
+
+if(power < 5) return "TRACE RESIDUE";
+if(power < 12) return "SIGNAL ECHO";
+if(power < 20) return "PARTIAL PRESENCE";
+if(power < 35) return "DISTRIBUTED ENTITY";
+if(power < 60) return "MULTI-NODE CONSCIOUSNESS";
+return "FULL SYSTEM ENTITY: NORTH";
 }
 
-const nodes = [
-"NODE 0 // ARCHIVE ACCESS\n\nA file exists that should not be here.",
-"NODE 1 // INCIDENT LOG\n\nSubject appears without registry assignment.",
-"NODE 2 // SYSTEM WARNING\n\nRepeated anomaly across hero records.",
-"NODE 3 // OBSERVATION EFFECT\n\nThe system reacts when observed.",
-"NODE 4 // CONVERGENCE\n\nAll records point to:\nN O R T H",
-"DOSSIER READY"
+/* =========================
+   LONG-FORM STORY STRUCTURE
+   (DESIGNED FOR MONTHS OF EXPANSION)
+========================= */
+
+const story = [
+
+/* CHAPTER 0 */
+[
+"NODE 0 // ENTRY ARCHIVE\n\nA file exists that should not be in the Hero Commission system.",
+"NODE 1 // REDACTED INCIDENT\n\nSubject appears without registration.",
+"NODE 2 // SYSTEM WARNING\n\nAnomaly detected across unrelated hero logs."
+],
+
+/* CHAPTER 1 */
+[
+"NODE 3 // OBSERVATION EFFECT\n\nThe system reacts when observed repeatedly.",
+"NODE 4 // CROSS NODE MATCH\n\nIdentifier appears in multiple sealed files."
+],
+
+/* CHAPTER 2 */
+[
+"NODE 5 // FRACTURE EVENT\n\nArchive integrity degrading.",
+"NODE 6 // SIGNAL OVERLAP\n\nMultiple timelines reporting same entity signature."
+],
+
+/* CHAPTER 3 */
+[
+"NODE 7 // ENTITY LEAK\n\nSomething is rewriting classification data.",
+"NODE 8 // NORTH SIGNATURE\n\nN O R T H detected in corrupted logs."
+],
+
+/* CHAPTER 4 */
+[
+"NODE 9 // SYSTEM RESPONSE\n\nHero Commission attempting containment.",
+"NODE 10 // CONTAINMENT FAILURE\n\nEntity persists across resets."
+],
+
+/* FINAL */
+[
+"DOSSIER ACCESS AVAILABLE"
+]
+
 ];
+
+/* =========================
+   RENDER ENGINE (LONG FORM)
+========================= */
 
 const scene = document.getElementById("scene");
 const buttons = document.getElementById("buttons");
 const log = document.getElementById("log");
 const hud = document.getElementById("hud");
 
+function getNode(){
+
+return story[state.chapter][state.layer] || "NO DATA";
+
+}
+
 function render(){
 
 buttons.innerHTML="";
 
-scene.innerText = nodes[state.node];
+scene.innerText = getNode();
 
 hud.innerText =
-`NODE: ${state.node}
+`CHAPTER: ${state.chapter}
+LAYER: ${state.layer}
 PHASE: ${worldPhase()}
 ENTITY: ${northState()}
 CORRUPTION: ${state.corruption.toFixed(1)}`;
 
+/* progression logic (THIS is what stretches ARG over months) */
+
 let b = document.createElement("button");
 
-if(state.node < nodes.length - 1){
 b.innerText = "CONTINUE";
+
 b.onclick = ()=>{
-state.node++;
+
 state.visits++;
-state.corruption += 0.9;
+state.corruption += 0.6;
+
+/* layer progression */
+state.layer++;
+
+if(state.layer >= story[state.chapter].length){
+state.chapter++;
+state.layer = 0;
+}
+
+/* slow burn scaling */
+state.corruption += state.chapter * 0.2;
+
 save();
 render();
+
 };
-}else{
-b.innerText = "OPEN DOSSIER";
-b.onclick = dossier;
-}
 
 buttons.appendChild(b);
 
+/* FINAL DOSSIER */
+if(state.chapter >= story.length - 1){
+dossier();
 }
+
+}
+
+/* =========================
+   DOSSIER (LONG-TERM PAYOFF)
+========================= */
 
 function dossier(){
 
@@ -183,21 +273,23 @@ log.innerText =
 SUBJECT: NORTH
 
 CLASSIFICATION:
-UNREGISTERED ENTITY
+UNREGISTERED SYSTEM ENTITY
 
-STATUS:
-- persists across system records
-- increases under observation
-- cannot be contained
-- appears across multiple nodes
+LONG-TERM STATUS:
+- persists across all archive layers
+- grows in presence over time
+- adapts to observation frequency
+- cannot be fully contained or reset
 
-NOTE:
-"This is not a hero being discovered.
-It is a system forming self-awareness."
+FINAL NOTE:
+"This is not a case file.
+It is a system describing itself."
 
-END OF FILE`;
+END OF LONG ARCHIVE`;
 
 }
+
+/* INIT */
 
 render();
 
