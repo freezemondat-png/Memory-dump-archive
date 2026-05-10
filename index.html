@@ -34,7 +34,41 @@ const northVoicePack = [
 "I can hear static where my thoughts used to be.",
 "North… designation… failing— system— reconnecting—"
 ];
+<button onclick="northSpeak()">NORTH SIGNAL</button>
 
+<script>
+function northSpeak() {
+    let msg = new SpeechSynthesisUtterance();
+
+    // Core voice text (you can edit this anytime)
+    msg.text = "I don't... want to overheat again. I can feel it deleting me... slowly.";
+
+    // Make it feel wrong / robotic / unstable
+    msg.rate = 0.85;   // slower = more eerie
+    msg.pitch = 0.4;   // lower = more drone-like
+    msg.volume = 0.8;
+
+    // Try to pick a robotic voice if available
+    let voices = speechSynthesis.getVoices();
+    msg.voice = voices.find(v =>
+        v.name.toLowerCase().includes("male") ||
+        v.name.toLowerCase().includes("robot") ||
+        v.name.toLowerCase().includes("google")
+    ) || voices[0];
+
+    speechSynthesis.speak(msg);
+
+    // visual corruption sync (MD feel)
+    let glitch = setInterval(() => {
+        document.body.style.opacity = Math.random() > 0.85 ? "0.6" : "1";
+    }, 70);
+
+    setTimeout(() => {
+        clearInterval(glitch);
+        document.body.style.opacity = "1";
+    }, 4000);
+}
+</script>
 function playRandomNorthLine() {
     let msg = new SpeechSynthesisUtterance(
         northVoicePack[Math.floor(Math.random() * northVoicePack.length)]
