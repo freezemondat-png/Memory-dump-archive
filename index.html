@@ -2,23 +2,26 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>HERO COMMISSION ARG ENGINE // NORTH PROTOCOL</title>
+<title>HERO COMMISSION NETWORK // NORTH PROTOCOL</title>
 
 <style>
 body{
 margin:0;
 background:#02030a;
-color:#d7e6ff;
+color:#d6e4ff;
 font-family:monospace;
+text-align:center;
 }
 
-#app{
+.wrap{
 max-width:800px;
 margin:60px auto;
 padding:20px;
 }
 
-.glitch{animation:g .15s infinite}
+.glitch{
+animation:g .15s infinite;
+}
 
 @keyframes g{
 0%{transform:translate(0)}
@@ -30,8 +33,8 @@ padding:20px;
 
 button{
 background:black;
-color:#d7e6ff;
-border:1px solid #4c7dff;
+color:#d6e4ff;
+border:1px solid #4f7cff;
 padding:10px;
 margin:6px;
 cursor:pointer;
@@ -39,209 +42,185 @@ cursor:pointer;
 
 #log{
 white-space:pre-wrap;
-border:1px solid #1d2a4a;
+text-align:left;
+border:1px solid #1d2a44;
 padding:15px;
 margin-top:20px;
-}
-
-#meta{
-font-size:12px;
-opacity:0.6;
-margin-top:10px;
+display:none;
 }
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<div class="wrap">
 
-<h1>ARG ENGINE // HERO COMMISSION NETWORK</h1>
-<p>Protocol: <span class="glitch">NORTH</span></p>
+<h1>HERO COMMISSION NETWORK</h1>
+<p>CLASSIFIED ARG SYSTEM // ENTITY: <span class="glitch">NORTH</span></p>
 
 <div id="scene"></div>
 <div id="buttons"></div>
 <div id="log"></div>
-<div id="meta"></div>
 
 </div>
 
 <script>
 
 /* =========================
-   ARG ENGINE ARCHITECTURE
-   (THIS is what scales forever)
+   PERSISTENT ARG STATE
 ========================= */
 
-/*
-CORE SYSTEM LAYERS:
+let state = JSON.parse(localStorage.getItem("north_arg")||"{}");
 
-1. STATE LAYER (who the player is)
-2. WORLD LAYER (global ARG timeline)
-3. ENTITY LAYER (NORTH behavior)
-4. CONTENT LAYER (story nodes)
-5. TRIGGER LAYER (puzzles & conditions)
-*/
-
-/* =========================
-   STATE LAYER
-========================= */
-
-let state = JSON.parse(localStorage.getItem("north_engine")||"{}");
-
-state.id ||= "NODE-" + Math.floor(Math.random()*999999);
 state.progress ||= 0;
-state.choices ||= 0;
-state.observations ||= 0;
+state.visits ||= 0;
 state.corruption ||= 0;
-state.timeSeed ||= Date.now();
+state.phase ||= Math.floor(Date.now()/30000)%6;
 
 function save(){
-localStorage.setItem("north_engine",JSON.stringify(state));
+localStorage.setItem("north_arg",JSON.stringify(state));
 }
 
 /* =========================
-   WORLD LAYER (GLOBAL FEEL)
+   WORLD PHASE SYSTEM
 ========================= */
 
-function worldState(){
-let t = Math.floor(Date.now()/30000);
-return {
-cycle: t % 6,
-event: ["Dormant","Signal Drift","Leak Detected","Cross-Node Echo","Entity Stirring","Full Resonance"][t%6]
-};
+function worldPhase(){
+let t = Math.floor(Date.now()/25000);
+let phases = [
+"DORMANT GRID",
+"SIGNAL DRIFT",
+"ARCHIVE DISTORTION",
+"CROSS NODE ECHO",
+"ENTITY RESONANCE",
+"FULL BREACH"
+];
+return phases[t % phases.length];
 }
 
 /* =========================
-   ENTITY LAYER (NORTH)
+   NORTH ENTITY ENGINE
 ========================= */
 
-function northEntity(){
+function northState(){
+let power = state.visits + state.corruption;
 
-let power = state.observations + state.corruption;
-
-if(power < 5) return "UNKNOWN ANOMALY";
-if(power < 10) return "UNSTABLE SIGNAL";
-if(power < 20) return "DISTRIBUTED PRESENCE";
-return "FULL ENTITY RESONANCE";
+if(power < 5) return "UNKNOWN FILE FRAGMENT";
+if(power < 10) return "SIGNAL ECHO";
+if(power < 18) return "DISTRIBUTED PRESENCE";
+return "ACTIVE SYSTEM ANOMALY";
 }
 
 /* =========================
-   CONTENT LAYER (ARG NODES)
+   ARG NODES (FULL STORY MAP)
 ========================= */
 
 const nodes = [
 
 {
-text:"HERO COMMISSION ARCHIVE NODE FOUND.\n\nA file exists that should not be accessible.",
-options:[
-["OPEN FILE",1]
-]
+text:`NODE 0 // ENTRY
+
+HERO COMMISSION ARCHIVE ACCESS GRANTED.
+
+A file exists that should not be here.`,
+next:1
 },
 
 {
-text:"FILE FRAGMENT:\n\n'...this hero classification was never approved...'",
-options:[
-["DEEP SCAN",2]
-]
+text:`NODE 1
+
+CLASSIFIED INCIDENT LOG:
+
+"...this hero was never registered..."`,
+next:2
 },
 
 {
-text:"WARNING:\n\nOBSERVATION DETECTED.\nTHE SYSTEM IS RESPONDING.",
-options:[
-["CONTINUE",3],
-["STOP",3]
-]
+text:`NODE 2
+
+SYSTEM WARNING:
+
+Repeated anomaly detected across records.`,
+next:3
 },
 
 {
-text:"MULTIPLE NETWORKS REPORT SAME SIGNATURE.\n\nENTITY: NORTH",
-options:[
-["TRACE SIGNAL",4]
-]
+text:`NODE 3
+
+OBSERVATION EFFECT DETECTED.
+
+THE SYSTEM IS RESPONDING TO YOU.`,
+next:4
 },
 
 {
-text:"SIGNAL STABILIZING...\n\nYOU ARE CLOSE TO THE CORE RECORD.",
-options:[
-["FINAL ACCESS",5]
-]
+text:`NODE 4
+
+CROSS-NODE MATCH FOUND:
+
+Designation appears everywhere: NORTH`,
+next:5
 },
 
 {
-text:"CLASSIFIED DOSSIER READY.",
-options:[
-["OPEN DOSSIER",6]
-]
+text:`NODE 5
+
+FINAL FILE AVAILABLE.`,
+next:6
 },
 
 {
-text:"END NODE"
+text:`NODE 6`
 }
 
 ];
 
 /* =========================
-   TRIGGER SYSTEM
-========================= */
-
-function trigger(action){
-state.choices++;
-state.corruption += Math.random()*2;
-state.observations += 1;
-state.progress = action;
-save();
-render();
-}
-
-/* =========================
-   RENDER ENGINE
+   ENGINE RENDER
 ========================= */
 
 const scene = document.getElementById("scene");
 const buttons = document.getElementById("buttons");
 const log = document.getElementById("log");
-const meta = document.getElementById("meta");
 
 function render(){
 
 buttons.innerHTML="";
 
-let world = worldState();
-
 let node = nodes[state.progress];
 
 scene.innerText = node.text;
 
-meta.innerText =
-`ID: ${state.id}
-PROGRESS: ${state.progress}
-WORLD STATE: ${world.event}
-ENTITY STATE: ${northEntity()}`;
+let btn = document.createElement("button");
+btn.innerText = state.progress < 6 ? "CONTINUE" : "VIEW DOSSIER";
 
-/* build options */
-(node.options||[]).forEach(o=>{
-let b=document.createElement("button");
-b.innerText=o[0];
-b.onclick=()=>trigger(o[1]);
-buttons.appendChild(b);
-});
+btn.onclick = ()=>{
+state.progress++;
+state.visits++;
+state.corruption += 0.8;
+save();
+render();
+};
 
-if(state.progress===6){
-showDossier();
+buttons.appendChild(btn);
+
+if(state.progress === 6){
+dossier();
 }
 
 }
 
 /* =========================
-   FINAL DOSSIER (NORTH REVEAL)
+   FINAL DOSSIER
 ========================= */
 
-function showDossier(){
+function dossier(){
 
 buttons.innerHTML="";
 
-log.innerText=
+log.style.display="block";
+
+log.innerText =
 `HERO COMMISSION DOSSIER
 
 SUBJECT: NORTH
@@ -250,11 +229,13 @@ CLASSIFICATION:
 UNREGISTERED HERO ENTITY
 
 STATUS:
-- persists across system cycles
-- appears in multiple network states
-- increases resonance under observation
+- persists across system records
+- increases under observation
+- cannot be fully contained
+- appears across multiple nodes
 
-NOTE:
+COMMISSION NOTE:
+
 "This is not a hero being discovered.
 It is a system forming around him."
 
