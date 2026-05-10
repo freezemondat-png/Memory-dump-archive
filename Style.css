@@ -1,0 +1,31 @@
+body {
+    margin:0;
+    font-family: monospace;
+    background:#050507;
+    color:#d0d0d0;
+}
+
+.page { padding:20px; }
+
+.corrupt {
+    animation: glitch 0.3s infinite;
+    color:#ff3b3b;
+}
+
+.restricted { color:#ff4d4d; }
+
+.link {
+    cursor:pointer;
+    color:#7aa2ff;
+    margin-top:10px;
+}
+
+.hint { opacity:0.6; }
+
+@keyframes glitch {
+    0%{transform:translate(0,0);}
+    25%{transform:translate(1px,-1px);}
+    50%{transform:translate(-1px,1px);}
+    75%{transform:translate(2px,0);}
+    100%{transform:translate(0,0);}
+}
