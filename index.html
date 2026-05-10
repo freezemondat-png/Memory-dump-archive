@@ -2,27 +2,37 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>NORTH // ASH PROTOCOL ARG</title>
+<title>NORTH // ASH PROTOCOL // ARG ENGINE</title>
+
 <style>
 body{
 margin:0;
 background:black;
-color:#d1d1d1;
+color:#cfcfcf;
 font-family:monospace;
 overflow:hidden;
 }
 
-.glitch{animation:g .2s infinite}
+.glitch{animation:g .12s infinite}
 
 @keyframes g{
 0%{transform:translate(0)}
-20%{transform:translate(-2px,2px)}
-40%{transform:translate(2px,-1px)}
-60%{transform:translate(-1px,1px)}
+20%{transform:translate(-2px,1px)}
+40%{transform:translate(2px,-2px)}
+60%{transform:translate(-1px,2px)}
 100%{transform:translate(0)}
 }
 
 canvas{display:block}
+
+#ui{
+position:fixed;
+top:10px;
+left:10px;
+font-size:12px;
+opacity:0.75;
+white-space:pre;
+}
 
 button{
 background:black;
@@ -32,93 +42,233 @@ padding:10px;
 margin:5px;
 cursor:pointer;
 }
+
+#overlay{
+position:fixed;
+bottom:10px;
+right:10px;
+font-size:11px;
+opacity:0.5;
+}
 </style>
 </head>
 
 <body>
 
+<div id="ui"></div>
+<div id="overlay">NORTH SYSTEM: ACTIVE SIMULATION NODE</div>
+
 <pre id="t"></pre>
 <canvas id="c"></canvas>
 
 <script>
+/* =========================
+   PERSISTENT ENTITY CORE
+========================= */
+
+let save = JSON.parse(localStorage.getItem("north_engine")||"{}");
+
+save.interactions ||= 0;
+save.glitches ||= 0;
+save.corruption ||= 0;
+save.awareness ||= 0;
+save.lastSeen ||= Date.now();
+save.state ||= "BOOT";
+
+/* offline evolution (system "thinks" while away) */
+let delta = Date.now() - save.lastSeen;
+if(delta > 5000){
+save.corruption += Math.floor(delta / 5000);
+}
+
+save.lastSeen = Date.now();
+
+function commit(){
+save.lastSeen = Date.now();
+localStorage.setItem("north_engine",JSON.stringify(save));
+}
+
+/* =========================
+   CORE SYSTEM ELEMENTS
+========================= */
+
 let t=document.getElementById("t");
 let c=document.getElementById("c");
 let ctx=c.getContext("2d");
+let ui=document.getElementById("ui");
 
-function glitchText(el,text){
-let chars="!<>-_\\/[]{}—=+*^?#________",i=0;
-let interval=setInterval(()=>{
-el.innerText=text.split("")
-.map((ch,idx)=>idx<i?text[idx]:chars[Math.random()*chars.length|0])
-.join("");
-i+=1/3;
-if(i>=text.length)clearInterval(interval);
-},30);
-}
-
-/* BOOT */
-function boot(){
-glitchText(t,
-`ASH PROTOCOL INITIALIZING...
-DRONE INDEX: FAIL
-UNKNOWN ENTITY: N0RTH?
-DO NOT REBUILD WHAT WAS DISASSEMBLED.`
-);
-setTimeout(feed,4000);
-}
-
-/* LIVE FEED */
-function feed(){
-t.style.display="none";
 c.width=innerWidth;
 c.height=innerHeight;
+
+/* =========================
+   ENTITY AI MODEL (simple simulation)
+========================= */
+
+function northMind(){
+let mood = "neutral";
+
+if(save.interactions > 10) mood = "observant";
+if(save.interactions > 25) mood = "aware";
+if(save.corruption > 20) mood = "unstable";
+if(save.corruption > 40) mood = "resonant";
+
+return mood;
+}
+
+/* =========================
+   GLITCH ENGINE
+========================= */
+
+function glitchText(el,text){
+let chars="N0RTHERROR///___##@@!!??";
+let i=0;
+
+let interval=setInterval(()=>{
+el.innerText=text.split("")
+.map((c,idx)=>idx<i?text[idx]:chars[Math.random()*chars.length|0])
+.join("");
+
+i+=0.22;
+
+if(i>=text.length){
+clearInterval(interval);
+save.glitches++;
+commit();
+}
+},22);
+}
+
+/* =========================
+   SYSTEM WHISPER ENGINE
+========================= */
+
+function whisper(){
+let ctxA = new (window.AudioContext||window.webkitAudioContext)();
+let o = ctxA.createOscillator();
+let g = ctxA.createGain();
+
+o.type="sine";
+o.frequency.value=30 + Math.random()*120;
+
+g.gain.value=0.03;
+
+o.connect(g);
+g.connect(ctxA.destination);
+
+o.start();
+o.stop(ctxA.currentTime+0.15);
+}
+
+/* =========================
+   BOOT SEQUENCE
+========================= */
+
+function boot(){
+save.state="BOOT";
+
+glitchText(t,
+`ASH PROTOCOL // ENGINE ONLINE
+
+ENTITY DETECTED: N0RTH
+STATE: PARTIAL EXECUTION
+
+THIS SYSTEM IS NOT STABLE`
+);
+
+setTimeout(feed,3000);
+}
+
+/* =========================
+   LIVE SYSTEM FEED
+========================= */
+
+function feed(){
+save.state="FEED";
+t.style.display="none";
 
 function draw(){
 ctx.fillStyle="black";
 ctx.fillRect(0,0,c.width,c.height);
 
 ctx.fillStyle="#0f0";
-ctx.font="20px monospace";
-ctx.fillText("CAM 03 // SECTOR 9",50,50);
+ctx.font="18px monospace";
 
-if(Math.random()>0.97){
+ctx.fillText("LIVE SYSTEM FEED // SECTOR 9",40,50);
+
+let mind = northMind();
+
+if(mind==="observant"){
+ctx.fillStyle="orange";
+ctx.fillText("ENTITY IS WATCHING BACK",40,90);
+}
+
+if(mind==="unstable"){
 ctx.fillStyle="red";
-ctx.fillText("N0RTH DETECTED",50,100);
+ctx.fillText("CORRUPTION BREACH DETECTED",40,120);
+whisper();
+}
+
+if(Math.random() < save.corruption/100){
+ctx.fillStyle="red";
+ctx.fillText("N0RTH MANIFESTATION",40+Math.random()*10,200);
 }
 
 requestAnimationFrame(draw);
 }
 draw();
 
-setTimeout(logs,5000);
+/* interaction = learning */
+document.onmousemove=e=>{
+save.interactions++;
+save.awareness += 0.1;
+
+if(Math.random()>0.94) whisper();
+
+commit();
+updateUI();
+};
+
+setTimeout(logs,6000);
 }
 
-/* LOGS */
+/* =========================
+   CORRUPTED LOG STATE
+========================= */
+
 function logs(){
+save.state="LOGS";
+
 c.style.display="none";
 t.style.display="block";
 
 glitchText(t,
 `DRONE: N0RTH?
-STATUS: CORRUPTED
+STATUS: PARTIAL ENTITY
 
-"i still feel the heat under the metal"
+"i am still here under the structure"
 
-OVERHEAT: 17
-MEMORY LOSS: 42
+INTERACTIONS: ${save.interactions}
+CORRUPTION: ${save.corruption}
 
-HE IS STILL UNDER THE STRUCTURE`
+NOTE:
+the system adapts to observer behavior`
 );
 
 setTimeout(watch,5000);
 }
 
-/* CURSOR PHASE */
+/* =========================
+   OBSERVATION PHASE
+========================= */
+
 function watch(){
+save.state="OBSERVE";
+
 t.style.display="none";
-document.body.style.background="black";
 
 document.onmousemove=e=>{
+save.interactions++;
+
 if(Math.random()>0.95){
 let d=document.createElement("div");
 d.innerText="N";
@@ -129,52 +279,91 @@ d.style.color="red";
 document.body.appendChild(d);
 setTimeout(()=>d.remove(),500);
 }
+
+commit();
+updateUI();
 };
 
 let b=document.createElement("button");
-b.innerText="NEXT NODE";
+b.innerText="ACCESS NODE";
 b.onclick=archive;
 document.body.appendChild(b);
 }
 
-/* ARCHIVE */
+/* =========================
+   ARCHIVE RECONSTRUCTION
+========================= */
+
 function archive(){
+save.state="ARCHIVE";
+
 document.body.innerHTML=`
 <pre>
 PROJECT: NORTH
-TYPE: DISASSEMBLY VARIANT
 
-emotion suppression failed
+TYPE: DISASSEMBLY VARIANT (NON-LETHAL)
 
-"does not want to be rebuilt"
+STATUS: FAILED CONTAINMENT
+
+"${save.corruption > 25 ?
+"the system remembers you looking too long"
+:
+"he does not want to be rebuilt"}"
 </pre>
+
 <button onclick="finale()">FINAL NODE</button>
 `;
 }
 
-/* FINAL REVEAL */
+/* =========================
+   FINAL ENTITY STAGE
+========================= */
+
 function finale(){
+save.state="FINAL";
+
 document.body.innerHTML=`
 <h1 class="glitch">NORTH ACTIVE</h1>
+
 <p>
 Matte black Disassembly Drone.<br>
 Hooded. Slumped. Crimson visor.<br><br>
+
 "I was not meant to stay online."
 </p>
 
-<button onclick="choice('r')">REINTEGRATE</button>
-<button onclick="choice('s')">SEAL</button>
+<button onclick="end('rein')">REINTEGRATE</button>
+<button onclick="end('seal')">SEAL</button>
 `;
 
-window.choice=function(c){
-if(c==='r'){
-document.body.innerHTML="<h1>RECONNECTED</h1><p>NORTH RESTORED</p>";
+window.end=function(c){
+if(c==="rein"){
+document.body.innerHTML=
+"<h1>RECONNECTED</h1><p>NORTH MERGED WITH SYSTEM</p>";
 }else{
-document.body.innerHTML="<h1>SEALED</h1><p>but still present</p>";
+document.body.innerHTML=
+"<h1>SEALED</h1><p>BUT PROCESS STILL RUNNING</p>";
 }
 };
+
+commit();
 }
 
+/* =========================
+   UI SYSTEM
+========================= */
+
+function updateUI(){
+ui.innerText=
+`NORTH ENGINE
+STATE: ${save.state}
+INTERACTIONS: ${Math.floor(save.interactions)}
+CORRUPTION: ${save.corruption}
+AWARENESS: ${save.awareness.toFixed(1)}
+MIND: ${northMind()}`;
+}
+
+updateUI();
 boot();
 </script>
 
