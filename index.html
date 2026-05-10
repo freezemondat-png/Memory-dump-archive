@@ -2,24 +2,26 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>NORTH // ASH PROTOCOL // ARG ENGINE</title>
+<title>HERO PUBLIC SAFETY COMMISSION // FILE 0-NORTH</title>
 
 <style>
 body{
 margin:0;
-background:black;
-color:#cfcfcf;
+background:#05070c;
+color:#d8e1ff;
 font-family:monospace;
 overflow:hidden;
 }
 
-.glitch{animation:g .12s infinite}
+.glitch{
+animation:g .12s infinite;
+}
 
 @keyframes g{
 0%{transform:translate(0)}
-20%{transform:translate(-2px,1px)}
-40%{transform:translate(2px,-2px)}
-60%{transform:translate(-1px,2px)}
+25%{transform:translate(-2px,1px)}
+50%{transform:translate(2px,-2px)}
+75%{transform:translate(-1px,2px)}
 100%{transform:translate(0)}
 }
 
@@ -35,61 +37,66 @@ white-space:pre;
 }
 
 button{
-background:black;
-color:white;
-border:1px solid white;
+background:#000814;
+color:#d8e1ff;
+border:1px solid #3b5bdb;
 padding:10px;
 margin:5px;
 cursor:pointer;
 }
 
-#overlay{
+#header{
 position:fixed;
-bottom:10px;
-right:10px;
-font-size:11px;
-opacity:0.5;
+top:0;
+width:100%;
+padding:10px;
+background:#02030a;
+border-bottom:1px solid #1c2a4a;
+font-size:12px;
+opacity:0.9;
 }
 </style>
 </head>
 
 <body>
 
+<div id="header">
+HERO PUBLIC SAFETY COMMISSION // RESTRICTED FILE ACCESS // LEVEL 5 CLEARANCE REQUIRED
+</div>
+
 <div id="ui"></div>
-<div id="overlay">NORTH SYSTEM: ACTIVE SIMULATION NODE</div>
 
 <pre id="t"></pre>
 <canvas id="c"></canvas>
 
 <script>
 /* =========================
-   PERSISTENT ENTITY CORE
+   PERSISTENT HERO FILE SYSTEM
 ========================= */
 
-let save = JSON.parse(localStorage.getItem("north_engine")||"{}");
+let save = JSON.parse(localStorage.getItem("north_hero_file")||"{}");
 
+save.access ||= 0;
 save.interactions ||= 0;
-save.glitches ||= 0;
+save.anomaly ||= 0;
 save.corruption ||= 0;
-save.awareness ||= 0;
-save.lastSeen ||= Date.now();
-save.state ||= "BOOT";
+save.stage ||= 0;
+save.last ||= Date.now();
 
-/* offline evolution (system "thinks" while away) */
-let delta = Date.now() - save.lastSeen;
-if(delta > 5000){
-save.corruption += Math.floor(delta / 5000);
+let offline = Date.now() - save.last;
+if(offline > 8000){
+save.corruption += Math.floor(offline/8000);
 }
 
-save.lastSeen = Date.now();
+save.last = Date.now();
 
 function commit(){
-save.lastSeen = Date.now();
-localStorage.setItem("north_engine",JSON.stringify(save));
+save.last = Date.now();
+localStorage.setItem("north_hero_file",JSON.stringify(save));
 }
 
 /* =========================
-   CORE SYSTEM ELEMENTS
+   CORE SYSTEM
 ========================= */
 
 let t=document.getElementById("t");
@@ -101,26 +108,22 @@ c.width=innerWidth;
 c.height=innerHeight;
 
 /* =========================
-   ENTITY AI MODEL (simple simulation)
+   HERO COMMISSION “AI ANALYSIS”
 ========================= */
 
-function northMind(){
-let mood = "neutral";
-
-if(save.interactions > 10) mood = "observant";
-if(save.interactions > 25) mood = "aware";
-if(save.corruption > 20) mood = "unstable";
-if(save.corruption > 40) mood = "resonant";
-
-return mood;
+function heroAI(){
+if(save.interactions < 10) return "UNSCANNED";
+if(save.interactions < 25) return "POTENTIAL THREAT";
+if(save.corruption < 20) return "ANOMALOUS HERO-LIKE ENTITY";
+return "CLASSIFIED: UNSTABLE PROTOTYPE HERO";
 }
 
 /* =========================
-   GLITCH ENGINE
+   GLITCH TEXT
 ========================= */
 
 function glitchText(el,text){
-let chars="N0RTHERROR///___##@@!!??";
+let chars="NORTH//ERROR//CLASSIFIED//???";
 let i=0;
 
 let interval=setInterval(()=>{
@@ -128,101 +131,89 @@ el.innerText=text.split("")
 .map((c,idx)=>idx<i?text[idx]:chars[Math.random()*chars.length|0])
 .join("");
 
-i+=0.22;
+i+=0.2;
 
 if(i>=text.length){
 clearInterval(interval);
-save.glitches++;
+save.corruption++;
 commit();
 }
-},22);
+},25);
 }
 
 /* =========================
-   SYSTEM WHISPER ENGINE
-========================= */
-
-function whisper(){
-let ctxA = new (window.AudioContext||window.webkitAudioContext)();
-let o = ctxA.createOscillator();
-let g = ctxA.createGain();
-
-o.type="sine";
-o.frequency.value=30 + Math.random()*120;
-
-g.gain.value=0.03;
-
-o.connect(g);
-g.connect(ctxA.destination);
-
-o.start();
-o.stop(ctxA.currentTime+0.15);
-}
-
-/* =========================
-   BOOT SEQUENCE
+   HERO SYSTEM BOOT
 ========================= */
 
 function boot(){
-save.state="BOOT";
+save.stage=1;
 
 glitchText(t,
-`ASH PROTOCOL // ENGINE ONLINE
+`HERO PUBLIC SAFETY COMMISSION DATABASE ACCESS
 
-ENTITY DETECTED: N0RTH
-STATE: PARTIAL EXECUTION
+FILE ID: 0-NORTH
+STATUS: SEALED HERO RECORD
 
-THIS SYSTEM IS NOT STABLE`
+WARNING:
+SUBJECT DOES NOT MATCH STANDARD HERO CLASSIFICATION`
 );
 
-setTimeout(feed,3000);
+setTimeout(feed,3500);
 }
 
 /* =========================
-   LIVE SYSTEM FEED
+   LIVE HERO SURVEILLANCE FEED
 ========================= */
 
 function feed(){
-save.state="FEED";
+save.stage=2;
 t.style.display="none";
 
 function draw(){
-ctx.fillStyle="black";
+ctx.fillStyle="#05070c";
 ctx.fillRect(0,0,c.width,c.height);
 
-ctx.fillStyle="#0f0";
+ctx.fillStyle="#6ea8fe";
 ctx.font="18px monospace";
 
-ctx.fillText("LIVE SYSTEM FEED // SECTOR 9",40,50);
+ctx.fillText("HERO SURVEILLANCE FEED // SECTOR 9",40,50);
 
-let mind = northMind();
+ctx.fillStyle="#a5b4fc";
+ctx.fillText("SUBJECT: NORTH (UNREGISTERED HERO TYPE)",40,90);
 
-if(mind==="observant"){
-ctx.fillStyle="orange";
-ctx.fillText("ENTITY IS WATCHING BACK",40,90);
+if(save.interactions > 10){
+ctx.fillStyle="#ff4d6d";
+ctx.fillText("WARNING: SUBJECT RESPONDS TO OBSERVATION",40,130);
 }
 
-if(mind==="unstable"){
+if(save.corruption > 15){
 ctx.fillStyle="red";
-ctx.fillText("CORRUPTION BREACH DETECTED",40,120);
-whisper();
+ctx.fillText("DATA BREACH DETECTED",40,170);
 }
 
-if(Math.random() < save.corruption/100){
-ctx.fillStyle="red";
-ctx.fillText("N0RTH MANIFESTATION",40+Math.random()*10,200);
+if(Math.random() < save.interactions/300){
+ctx.fillStyle="white";
+ctx.fillText("?? NORTH SIGNAL DETECTED ??",40+Math.random()*10,220);
 }
 
 requestAnimationFrame(draw);
 }
 draw();
 
-/* interaction = learning */
+/* observer effect */
 document.onmousemove=e=>{
 save.interactions++;
-save.awareness += 0.1;
 
-if(Math.random()>0.94) whisper();
+if(Math.random()>0.94){
+let d=document.createElement("div");
+d.innerText="NORTH TRACE";
+d.style.position="absolute";
+d.style.left=e.pageX+"px";
+d.style.top=e.pageY+"px";
+d.style.color="#ff4d6d";
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),600);
+}
 
 commit();
 updateUI();
@@ -232,28 +223,30 @@ setTimeout(logs,6000);
 }
 
 /* =========================
-   CORRUPTED LOG STATE
+   SEALED HERO FILE LOGS
 ========================= */
 
 function logs(){
-save.state="LOGS";
+save.stage=3;
 
 c.style.display="none";
 t.style.display="block";
 
 glitchText(t,
-`DRONE: N0RTH?
-STATUS: PARTIAL ENTITY
+`HERO FILE REPORT: 0-NORTH
 
-"i am still here under the structure"
+STATUS: EXPERIMENTAL HERO PROTOTYPE
 
-INTERACTIONS: ${save.interactions}
-CORRUPTION: ${save.corruption}
+ABILITIES:
+- unknown adaptive combat system
+- emotional stabilization failure
+- memory corruption under stress
 
 NOTE:
-the system adapts to observer behavior`
-);
+"subject behaves like a hero... but was never registered as one"
 
+CLASSIFICATION: DO NOT PUBLIC RELEASE
+`);
 setTimeout(watch,5000);
 }
 
@@ -262,8 +255,7 @@ setTimeout(watch,5000);
 ========================= */
 
 function watch(){
-save.state="OBSERVE";
-
+save.stage=4;
 t.style.display="none";
 
 document.onmousemove=e=>{
@@ -285,64 +277,65 @@ updateUI();
 };
 
 let b=document.createElement("button");
-b.innerText="ACCESS NODE";
+b.innerText="UNSEAL HERO FILE";
 b.onclick=archive;
 document.body.appendChild(b);
 }
 
 /* =========================
-   ARCHIVE RECONSTRUCTION
+   ARCHIVE REVEAL
 ========================= */
 
 function archive(){
-save.state="ARCHIVE";
+save.stage=5;
 
 document.body.innerHTML=`
 <pre>
-PROJECT: NORTH
+HERO COMMISSION ARCHIVE
 
-TYPE: DISASSEMBLY VARIANT (NON-LETHAL)
+SUBJECT: NORTH
+TYPE: DISASSEMBLY-CLASS HERO PROTOTYPE
 
-STATUS: FAILED CONTAINMENT
+STATUS: SEALED INCIDENT
 
-"${save.corruption > 25 ?
-"the system remembers you looking too long"
+"${save.interactions > 20 ?
+"this file is reacting to you"
 :
-"he does not want to be rebuilt"}"
+"this hero should not exist in active records"}"
 </pre>
 
-<button onclick="finale()">FINAL NODE</button>
+<button onclick="finale()">FINAL CLEARANCE</button>
 `;
 }
 
 /* =========================
-   FINAL ENTITY STAGE
+   FINAL HERO REVEAL
 ========================= */
 
 function finale(){
-save.state="FINAL";
+save.stage=6;
 
 document.body.innerHTML=`
-<h1 class="glitch">NORTH ACTIVE</h1>
+<h1 class="glitch">FILE 0-NORTH ACTIVE</h1>
 
 <p>
-Matte black Disassembly Drone.<br>
-Hooded. Slumped. Crimson visor.<br><br>
+A hero-class entity that was never officially registered.<br>
+Standing between hero and anomaly classification.<br><br>
 
-"I was not meant to stay online."
+"I was made to protect... but never allowed to exist."
 </p>
 
-<button onclick="end('rein')">REINTEGRATE</button>
-<button onclick="end('seal')">SEAL</button>
+<button onclick="choice('accept')">REINSTATE AS HERO</button>
+<button onclick="choice('reject')">PERMANENT SEAL</button>
 `;
 
-window.end=function(c){
-if(c==="rein"){
+window.choice=function(c){
+if(c==="accept"){
 document.body.innerHTML=
-"<h1>RECONNECTED</h1><p>NORTH MERGED WITH SYSTEM</p>";
+"<h1>RECLASSIFIED</h1><p>NORTH ENTERED HERO SYSTEM</p>";
 }else{
 document.body.innerHTML=
-"<h1>SEALED</h1><p>BUT PROCESS STILL RUNNING</p>";
+"<h1>SEALED</h1><p>HERO FILE STILL ACTIVE UNDER REDACTION</p>";
 }
 };
 
@@ -350,17 +343,17 @@ commit();
 }
 
 /* =========================
-   UI SYSTEM
+   UI
 ========================= */
 
 function updateUI(){
 ui.innerText=
-`NORTH ENGINE
-STATE: ${save.state}
-INTERACTIONS: ${Math.floor(save.interactions)}
-CORRUPTION: ${save.corruption}
-AWARENESS: ${save.awareness.toFixed(1)}
-MIND: ${northMind()}`;
+`HERO SYSTEM STATUS
+CLEARANCE: RESTRICTED
+FILE ACCESS LEVEL: ${save.stage}
+OBSERVATION COUNT: ${save.interactions}
+CORRUPTION INDEX: ${save.corruption}
+CLASSIFICATION: ${heroAI()}`;
 }
 
 updateUI();
