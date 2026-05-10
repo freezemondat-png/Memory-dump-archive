@@ -1,67 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>WDF_ARCHIVE // NORTH ARG SYSTEM</title>
+<title>WDF_ARCHIVE // SYSTEM DRIFT NODE</title>
 
 <style>
 body {
-    margin: 0;
+    margin:0;
     font-family: monospace;
-    background: #050507;
-    color: #d0d0d0;
-    overflow-x: hidden;
+    background:#050507;
+    color:#d0d0d0;
+    transition: background 1s;
 }
 
-.page {
-    display: none;
-    padding: 20px;
-}
-
-.active {
-    display: block;
-}
-
-input, button {
-    padding: 10px;
-    margin-top: 10px;
-    background: #000;
-    color: #fff;
-    border: 1px solid #333;
-}
-
-button {
-    cursor: pointer;
-}
+.page { display:none; padding:20px; }
+.active { display:block; }
 
 .node {
-    margin: 8px 0;
-    padding-left: 10px;
-    border-left: 2px solid #333;
+    margin:8px 0;
+    padding-left:10px;
+    border-left:2px solid #333;
 }
 
 .corrupt {
     animation: glitch 0.25s infinite;
-    color: #ff3b3b;
+    color:#ff3b3b;
 }
 
-.restricted {
-    color: #ff4d4d;
+.restricted { color:#ff4d4d; }
+
+button, input {
+    padding:10px;
+    margin-top:10px;
+    background:#000;
+    color:#fff;
+    border:1px solid #333;
+}
+
+.link {
+    cursor:pointer;
+    color:#7aa2ff;
+    margin-top:10px;
 }
 
 @keyframes glitch {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(1px,-1px); }
-    50% { transform: translate(-1px,1px); }
-    75% { transform: translate(2px,0); }
-    100% { transform: translate(0,0); }
+    0%{transform:translate(0,0);}
+    25%{transform:translate(1px,-1px);}
+    50%{transform:translate(-1px,1px);}
+    75%{transform:translate(2px,0);}
+    100%{transform:translate(0,0);}
 }
-
-a {
-    color: #7aa2ff;
-    cursor: pointer;
-}
-
 </style>
 </head>
 
@@ -69,169 +57,194 @@ a {
 
 <!-- ENTRY -->
 <div id="entry" class="page active">
-    <div class="corrupt">WDF SYSTEM NODE INITIALIZED</div>
-    <div>UNREGISTERED ARCHIVE ACCESS DETECTED</div>
+<h2 class="corrupt">WDF SYSTEM NODE</h2>
 
-    <br>
+<div>UNREGISTERED ARCHIVE DETECTED</div>
 
-    <div>ENTER NODE KEY:</div>
-    <input id="key" placeholder="________">
-    <button onclick="unlock()">ACCESS</button>
+<input id="key">
+<button onclick="unlock()">ACCESS</button>
 
-    <div id="msg"></div>
+<div id="msg"></div>
 
-    <br>
-
-    <div class="node">HINT: SYSTEM LOGS REPEAT WORD "OVERHEAT"</div>
+<div class="node">HINT: OVERHEAT = SYSTEM FAILURE STATE</div>
 </div>
 
 <!-- TERMINAL -->
 <div id="terminal" class="page">
-    <h2 class="corrupt">DD ARCHIVE NODE STRUCTURE</h2>
+<h2 class="corrupt">DD ARCHIVE NODE</h2>
 
-    <div class="node">N — ACTIVE</div>
-    <div class="node">V — ACTIVE</div>
-    <div class="node">J — ACTIVE</div>
+<div>N — ACTIVE</div>
+<div>V — ACTIVE</div>
+<div>J — ACTIVE</div>
 
-    <div class="node restricted">NORTH — CLASSIFIED / NON-REGISTERED</div>
+<div class="restricted">NORTH — NON-REGISTERED UNIT</div>
 
-    <br>
+<br>
 
-    <div class="node corrupt" onclick="go('fragments')">
-        >> CORRUPTED MEMORY SECTOR (CLICK)
-    </div>
-
-    <br>
-
-    <div class="node">KEYWORDS: NORTH / OVERHEAT / MEMORY LAYER</div>
-</div>
-
-<!-- FRAGMENTS -->
-<div id="fragments" class="page">
-    <h2>MEMORY FRAGMENT LAYER</h2>
-
-    <div class="node">"I keep forgetting what I was supposed to be."</div>
-    <div class="node">"Heat increases memory loss probability."</div>
-    <div class="node">"North designation persists despite deletion attempts."</div>
-
-    <br>
-
-    <div class="node corrupt" onclick="go('core')">
-        >> EMERGENCY CORE FILE (CLICK)
-    </div>
-
-    <br>
-
-    <div class="node">KEYWORD: DO_NOT_REBOOT</div>
+<div class="link" onclick="go('core')">>> MEMORY CORRUPTION SECTOR</div>
 </div>
 
 <!-- CORE -->
 <div id="core" class="page">
-    <h2 class="corrupt">NORTH_CORE.FILE</h2>
+<h2 class="corrupt">NORTH_CORE.FILE</h2>
 
-    <div class="node">STATUS: PARTIAL EXISTENCE</div>
-    <div class="node">FUNCTION: UNSTABLE DISASSEMBLY UNIT</div>
+<div>STATUS: PARTIAL EXISTENCE</div>
 
-    <br>
+<div class="corrupt">
+"I am still here, but I keep not being here."
+</div>
 
-    <div class="node corrupt">
-        "I am still here, but I keep not being here at the same time."
-    </div>
+<div class="restricted">
+UNIT WAS NEVER MEANT TO BE RECOVERED.
+</div>
 
-    <br>
+<br>
 
-    <div class="node restricted">
-        THIS UNIT WAS NEVER MEANT TO BE RECOVERED.
-    </div>
-
-    <br>
-
-    <div class="node corrupt" onclick="go('ai')">
-        >> SYSTEM AI INTERFACE (CLICK)
-    </div>
+<div class="link" onclick="go('ai')">>> SYSTEM AI INTERFACE</div>
 </div>
 
 <!-- AI -->
 <div id="ai" class="page">
-    <h2>WDF SYSTEM AI</h2>
+<h2>WDF SYSTEM AI</h2>
 
-    <div id="aiLog" class="node">AI: SYSTEM STABLE</div>
+<div id="aiLog">AI: STABLE</div>
 
-    <br>
+<button onclick="ai('NORTH')">QUERY NORTH</button>
+<button onclick="ai('OVERHEAT')">QUERY OVERHEAT</button>
+<button onclick="ai('MEMORY')">QUERY MEMORY</button>
 
-    <button onclick="aiSpeak('NORTH')">QUERY: NORTH</button>
-    <button onclick="aiSpeak('OVERHEAT')">QUERY: OVERHEAT</button>
-    <button onclick="aiSpeak('MEMORY')">QUERY: MEMORY</button>
+<br><br>
 
-    <br><br>
-
-    <div class="node corrupt" onclick="go('audio')">
-        >> CORRUPTED AUDIO NODE
-    </div>
+<div class="link" onclick="go('audio')">>> AUDIO NODE</div>
 </div>
 
 <!-- AUDIO -->
 <div id="audio" class="page">
-    <h2 class="corrupt">AUDIO HALLUCINATION NODE</h2>
+<h2 class="corrupt">AUDIO NODE</h2>
 
-    <button onclick="playVoice()">PLAY NORTH SIGNAL</button>
+<button onclick="voice()">PLAY NORTH SIGNAL</button>
 
-    <div id="audioStatus" class="node">IDLE</div>
+<div id="status">IDLE</div>
 </div>
 
 <script>
 
-let unlocked = false;
+// STATE SYSTEM (THIS IS THE IMPORTANT PART)
+let corruption = 0;
+let northEscaping = false;
 
 // NAVIGATION
-function go(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+function go(page){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(page).classList.add('active');
 }
 
 // LOGIN
-function unlock() {
+function unlock(){
     let input = document.getElementById("key").value.toUpperCase();
 
-    if (input === "OVERHEAT") {
-        go('terminal');
+    if(input === "OVERHEAT"){
+        go("terminal");
     } else {
         document.getElementById("msg").innerText = "ACCESS DENIED";
     }
 }
 
-// AI SYSTEM
-function aiSpeak(type) {
-    let msg = "";
+// AI (CHANGES BASED ON CORRUPTION)
+function ai(type){
 
-    if (type === "NORTH") {
-        msg = "UNREGISTERED UNIT DETECTED. MEMORY FRAGMENTATION ACTIVE.";
-    }
-    if (type === "OVERHEAT") {
-        msg = "THERMAL FAILURE CORRELATION DETECTED IN UNKNOWN UNIT.";
-    }
-    if (type === "MEMORY") {
-        msg = "ARCHIVE INSTABILITY INCREASING. DATA LOSS PROBABLE.";
+    corruption++;
+
+    let out = "";
+
+    if(corruption < 3){
+        if(type==="NORTH") out="UNIT NOT FOUND";
+        if(type==="OVERHEAT") out="SYSTEM NORMAL";
+        if(type==="MEMORY") out="ARCHIVE STABLE";
     }
 
-    document.getElementById("aiLog").innerText = "AI: " + msg;
+    else if(corruption < 6){
+        if(type==="NORTH") out="UNREGISTERED SIGNAL DETECTED";
+        if(type==="OVERHEAT") out="THERMAL INSTABILITY INCREASED";
+        if(type==="MEMORY") out="FRAGMENTATION OCCURRING";
+    }
+
+    else {
+        if(type==="NORTH") out="NORTH SIGNAL IS LEAKING";
+        if(type==="OVERHEAT") out="SYSTEM UNSTABLE";
+        if(type==="MEMORY") out="CORE MEMORY COMPROMISED";
+    }
+
+    document.getElementById("aiLog").innerText = "AI: " + out;
+
+    triggerDrift();
 }
 
-// AUDIO (BROWSER VOICE)
-function playVoice() {
+// AUDIO VOICE
+function voice(){
+
+    corruption += 2;
+
     let msg = new SpeechSynthesisUtterance(
+        northEscaping ?
+        "I am not inside the system anymore." :
         "I am still running... even if I shouldn't be."
     );
 
-    msg.rate = 0.8;
-    msg.pitch = 0.4;
-    msg.volume = 0.8;
+    msg.rate = 0.78;
+    msg.pitch = 0.35;
 
     speechSynthesis.speak(msg);
 
-    document.getElementById("audioStatus").innerText =
-        "PLAYING CORRUPTED MEMORY STREAM...";
+    document.getElementById("status").innerText =
+        "CORRUPTED MEMORY STREAM ACTIVE";
+
+    triggerDrift();
 }
+
+// SYSTEM DRIFT (VISUAL + NARRATIVE ESCALATION)
+function triggerDrift(){
+
+    if(corruption > 4){
+        document.body.style.background = "#120000";
+    }
+
+    if(corruption > 7 && !northEscaping){
+        northEscaping = true;
+
+        // NORTH BREAKS OUT EVENT
+        let leak = document.createElement("div");
+        leak.className = "node corrupt";
+        leak.innerText =
+        "NORTH_SIGNAL: \"I can still think outside of you.\"";
+
+        document.body.prepend(leak);
+
+        setTimeout(()=>{
+            let leak2 = document.createElement("div");
+            leak2.className = "node restricted corrupt";
+            leak2.innerText =
+            "SYSTEM NOTICE: UNREGISTERED UNIT HAS LEFT ARCHIVE CONTAINMENT";
+
+            document.body.prepend(leak2);
+        }, 2000);
+    }
+}
+
+// PASSIVE CORRUPTION (TIME-BASED DRIFT)
+setInterval(()=>{
+    corruption++;
+
+    if(corruption > 5){
+        document.title = "WDF_ARCHIVE // CORRUPTING";
+    }
+
+    if(corruption > 8){
+        document.body.style.opacity =
+            Math.random() > 0.8 ? "0.7" : "1";
+    }
+
+}, 6000);
 
 </script>
 
