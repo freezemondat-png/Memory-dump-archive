@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>NORTH // ARG ARCHIVE</title>
+<title>NORTH // HERO COMMISSION ARCHIVE</title>
 
 <style>
 body{
@@ -13,57 +13,22 @@ font-family:monospace;
 text-align:center;
 }
 
-.wrap{
-max-width:900px;
-margin:40px auto;
-padding:20px;
-}
+.wrap{max-width:900px;margin:40px auto;padding:20px;}
+.panel{border:1px solid #2a3a5f;background:rgba(10,15,25,0.6);padding:15px;margin-top:20px;}
 
-.panel{
-border:1px solid #2a3a5f;
-background:rgba(10,15,25,0.6);
-padding:15px;
-margin-top:20px;
-}
+.glitch{color:#7aa2ff;animation:f 0.12s infinite;}
+@keyframes f{0%{opacity:1}50%{opacity:0.3}100%{opacity:1}}
 
-.glitch{
-color:#7aa2ff;
-animation:flick 0.12s infinite;
-}
+.section{border:1px solid #24314f;padding:12px;margin:10px 0;cursor:pointer;text-align:left}
+.section:hover{border-color:#4f7cff}
 
-@keyframes flick{
-0%{opacity:1}
-50%{opacity:0.3}
-100%{opacity:1}
-}
+.hidden{display:none;margin-top:10px;border-left:2px solid #7aa2ff;padding:10px}
+.small{opacity:0.7;font-size:12px}
 
-.section{
-border:1px solid #24314f;
-padding:12px;
-margin:10px 0;
-cursor:pointer;
-}
+button{background:black;color:#d6e4ff;border:1px solid #4f7cff;padding:10px;margin-top:15px;cursor:pointer}
 
-.section:hover{
-border-color:#4f7cff;
-}
-
-.hidden{
-display:none;
-padding:10px;
-margin-top:10px;
-border-left:2px solid #7aa2ff;
-text-align:left;
-}
-
-button{
-background:black;
-color:#d6e4ff;
-border:1px solid #4f7cff;
-padding:10px;
-margin-top:15px;
-cursor:pointer;
-}
+.corrupt{color:#ff6b6b}
+.locked{opacity:0.4;pointer-events:none}
 </style>
 </head>
 
@@ -76,75 +41,97 @@ cursor:pointer;
 
 <div class="panel">
 
-<div class="section" onclick="t('a')">
+<div id="ch1" class="section locked" onclick="openNode(1)">
 📁 INCIDENT REPORT CH-01
-<div id="a" class="hidden">
-Subject appears without registry entry.<br>
-Entity marker: NORTH
-</div>
+<div class="hidden">Subject appears without registry entry. Marker: NORTH</div>
 </div>
 
-<div class="section" onclick="t('b')">
+<div id="ch2" class="section locked" onclick="openNode(2)">
 📁 SECURITY FEED CH-02
-<div id="b" class="hidden">
-Empty corridor recorded.<br>
-Audio corruption: “It is already inside.”
-</div>
+<div class="hidden">Empty corridor. Audio: “It is already inside.”</div>
 </div>
 
-<div class="section" onclick="t('c')">
+<div id="ch3" class="section locked" onclick="openNode(3)">
 📁 INTERNAL LOG CH-03
-<div id="c" class="hidden">
-System rewriting detected after observation cycles.<br>
-Anomaly spread increasing.
-</div>
+<div class="hidden">System rewriting detected after repeated observation cycles.</div>
 </div>
 
-<div class="section" onclick="t('d')">
+<div id="ch4" class="section locked" onclick="openNode(4)">
 📁 FRACTURE EVENT CH-04
-<div id="d" class="hidden">
-Containment failure imminent.<br>
-N O R T H detected across all archives.
-</div>
+<div class="hidden">Containment failure imminent. N O R T H detected.</div>
 </div>
 
-<button onclick="unlock()">🔒 OPEN DOSSIER</button>
-
+<div class="section" onclick="toggle('dossier')">
+🔒 DOSSIER ACCESS
 <div id="dossier" class="hidden">
-
-<h2 class="glitch">HERO COMMISSION DOSSIER</h2>
-
+<h3 class="glitch">HERO COMMISSION DOSSIER</h3>
 <p><b>SUBJECT:</b> NORTH</p>
-<p><b>STATUS:</b> UNREGISTERED SYSTEM ENTITY</p>
-
-<p>
-- persists across archive records<br>
-- increases under observation<br>
-- cannot be contained<br>
-- appears across multiple systems simultaneously
-</p>
-
-<p class="glitch">
-“This is not a discovery.<br>
-It is the system becoming aware of itself.”
-</p>
-
+<p class="corrupt" id="northState">STATUS: UNSTABLE</p>
+<p>- persists across records<br>- increases under observation<br>- self-rewriting anomalies detected<br>- appears differently per viewer</p>
+<p class="small">“This is not a discovery. It is observation becoming mutual.”</p>
+</div>
 </div>
 
+<div id="hidden" class="hidden corrupt">
+⚠ CORRUPTED FRAGMENT UNLOCKED ⚠<br>
+“you are being observed as well”
 </div>
 
+<button onclick="reset()">RESET TRACE</button>
+
+</div>
 </div>
 
 <script>
 
-function t(id){
-let e=document.getElementById(id);
-e.style.display = e.style.display==="block"?"none":"block";
+let state=JSON.parse(localStorage.getItem("northARG")||"{}");
+state.visits||=0;
+state.node||=0;
+state.flags||=0;
+
+function save(){localStorage.setItem("northARG",JSON.stringify(state))}
+
+function unlockNodes(){
+for(let i=1;i<=4;i++){
+let el=document.getElementById("ch"+i);
+if(state.node>=i-1)el.classList.remove("locked");
+}
 }
 
-function unlock(){
-document.getElementById("dossier").style.display="block";
+function openNode(n){
+if(state.node===n-1){
+state.node++;
+state.visits++;
+state.flags+=Math.random()>0.7?1:0;
+save();
+updateNorth();
+document.querySelectorAll(".section")[n-1].children[0].style.display="block";
+unlockNodes();
+if(state.flags>2)document.getElementById("hidden").style.display="block";
 }
+}
+
+function toggle(id){
+let e=document.getElementById(id);
+e.style.display=e.style.display==="block"?"none":"block";
+state.visits++;save();updateNorth();unlockNodes();
+}
+
+function updateNorth(){
+let p=state.visits+state.flags;
+let s=document.getElementById("northState");
+if(p<5)s.innerText="STATUS: TRACE RESIDUE";
+else if(p<10)s.innerText="STATUS: SIGNAL ECHO";
+else if(p<20)s.innerText="STATUS: DISTRIBUTED";
+else s.innerText="STATUS: ENTITY INTERACTION DETECTED";
+}
+
+function reset(){
+localStorage.clear();
+location.reload();
+}
+
+unlockNodes();updateNorth();
 
 </script>
 
