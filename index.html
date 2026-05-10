@@ -13,28 +13,48 @@ font-family:monospace;
 text-align:center;
 }
 
-.wrap{max-width:900px;margin:40px auto;padding:20px;}
-.panel{border:1px solid #24314f;background:rgba(10,15,25,0.6);padding:15px;margin-top:20px}
+.wrap{max-width:900px;margin:40px auto;padding:20px}
 
-.glitch{color:#7aa2ff;animation:g .09s infinite}
-@keyframes g{0%{opacity:1}50%{opacity:.25}100%{opacity:1}}
+.panel{
+max-width:800px;
+margin:30px auto;
+padding:15px;
+border:1px solid #24314f;
+background:rgba(10,15,25,0.6);
+}
+
+.glitch{
+color:#7aa2ff;
+animation:f 0.1s infinite;
+}
+
+@keyframes f{
+0%{opacity:1}
+50%{opacity:0.3}
+100%{opacity:1}
+}
+
+a{
+display:block;
+margin:10px;
+color:#9bbcff;
+text-decoration:none;
+}
 
 .section{
-border:1px solid #1d2a44;
-padding:12px;
+border:1px solid #1f2b45;
+padding:10px;
 margin:10px 0;
 cursor:pointer;
 text-align:left;
-opacity:.6;
-transition:.2s;
 }
 
-.section:hover{border-color:#4f7cff}
-.locked{pointer-events:none;filter:blur(1px);opacity:.3}
-
-.hidden{display:none;margin-top:10px;border-left:2px solid #7aa2ff;padding:10px}
-
-.corrupt{color:#ff6b6b}
+.hidden{
+display:none;
+margin-top:10px;
+border-left:2px solid #7aa2ff;
+padding:10px;
+}
 
 button{
 background:black;
@@ -44,6 +64,8 @@ padding:10px;
 margin-top:15px;
 cursor:pointer;
 }
+
+.small{font-size:12px;opacity:0.7}
 </style>
 </head>
 
@@ -52,54 +74,49 @@ cursor:pointer;
 <div class="wrap">
 
 <h1>HERO COMMISSION ARCHIVE</h1>
-<p class="glitch">UNREGISTERED ENTITY DETECTED // NORTH PROTOCOL</p>
+<p class="glitch">UNREGISTERED ENTITY DETECTED // NORTH PROTOCOL ACTIVE</p>
 
 <div class="panel">
 
-<div id="ch1" class="section locked" onclick="node(1)">
-📁 INCIDENT REPORT CH-01
-<div class="hidden">Subject exists without origin record.</div>
+<div class="section" onclick="openNode('ch1')">
+📁 CH-01 INCIDENT REPORT
+<div id="ch1" class="hidden">Subject appears without origin record. Marker: NORTH</div>
 </div>
 
-<div id="ch2" class="section locked" onclick="node(2)">
-📁 SECURITY FEED CH-02
-<div class="hidden">Audio fragment detected: “it sees the observer too”</div>
+<div class="section" onclick="openNode('ch2')">
+📁 CH-02 SECURITY FEED
+<div id="ch2" class="hidden">Audio corruption: “It is already inside the system.”</div>
 </div>
 
-<div id="ch3" class="section locked" onclick="node(3)">
-📁 INTERNAL LOG CH-03
-<div class="hidden">System rewriting increases with repeated access cycles.</div>
+<div class="section" onclick="openNode('ch3')">
+📁 CH-03 INTERNAL LOG
+<div id="ch3" class="hidden">System rewriting increases with observation cycles.</div>
 </div>
 
-<div id="ch4" class="section locked" onclick="node(4)">
-📁 FRACTURE EVENT CH-04
-<div class="hidden">Entity signature: N O R T H // distributed across archives</div>
+<div class="section" onclick="openNode('ch4')">
+📁 CH-04 FRACTURE EVENT
+<div id="ch4" class="hidden">Entity signature distributed across archives: N O R T H</div>
 </div>
 
-<div class="section" onclick="toggle('dossier')">
-🔒 CLASSIFIED DOSSIER
+<button onclick="toggle('dossier')">🔒 CLASSIFIED DOSSIER</button>
+
 <div id="dossier" class="hidden">
-<h3 class="glitch">HERO COMMISSION DOSSIER</h3>
+
+<h2 class="glitch">HERO COMMISSION DOSSIER</h2>
 
 <p><b>SUBJECT:</b> NORTH</p>
 <p id="state">STATUS: UNSTABLE TRACE</p>
 
-<p>- non-localized presence across records<br>
-- increases with observation frequency<br>
-- alters archive integrity over time<br>
-- reacts differently per observer pattern</p>
+<p>
+- persists across archive nodes<br>
+- reacts to observation frequency<br>
+- distributed anomaly presence<br>
+- cannot be contained
+</p>
 
-<p class="corrupt" id="echo"></p>
+<p class="small">“Observation does not reveal NORTH — it constructs it.”</p>
 
 </div>
-</div>
-
-<div id="secret" class="hidden corrupt">
-⚠ CORRUPTED ECHO DETECTED ⚠<br>
-“you are not the only one reading this”
-</div>
-
-<button onclick="reset()">RESET TRACE</button>
 
 </div>
 
@@ -107,104 +124,67 @@ cursor:pointer;
 
 <script>
 
-/* ===== PERSISTENT ARG CORE ===== */
+/* ===== SINGLE-FILE ARG CORE ===== */
 
-let s=JSON.parse(localStorage.getItem("NORTH_CORE")||"{}");
+let s=JSON.parse(localStorage.getItem("NORTH_ARG")||"{}");
 
-s.n||=0;
 s.v||=0;
 s.f||=0;
-s.k||(s.k=Math.random()*10);
 
-function save(){localStorage.setItem("NORTH_CORE",JSON.stringify(s))}
-
-/* ===== HARD LOCK PROGRESSION ===== */
-
-function unlock(){
-for(let i=1;i<=4;i++){
-let el=document.getElementById("ch"+i);
-if(s.n>=i-1){
-el.classList.remove("locked");
-el.style.opacity=1;
-}
-}
-}
-
-/* ===== NODE SYSTEM (DELIBERATELY NON-LINEAR) ===== */
-
-function node(i){
-
-/* hidden condition layer (ARG difficulty) */
-let seed=(s.v+s.f)*s.k;
-
-/* progression requires pattern, not just clicking */
-if(seed % (i+2) < 1){
-
-s.n++;
 s.v++;
-s.f += (Math.random()>0.85?1:0);
 
-save();
-unlock();
+/* LOG SYSTEM */
+const logs={
+ch1:"Subject appears without origin record.",
+ch2:"Security feed distortion detected.",
+ch3:"System rewriting increases under observation.",
+ch4:"Entity signature: NORTH distributed anomaly"
+};
+
+/* NODE FUNCTION (SIMULATED MULTI-SITE) */
+function openNode(id){
+let el=document.getElementById(id);
+if(el.style.display==="block"){
+el.style.display="none";
+}else{
+el.style.display="block";
+
+if(id==="ch3") s.f++;
+s.v++;
+
 update();
-
-if(s.f>3){
-document.getElementById("secret").style.display="block";
-}
-
-document.querySelectorAll(".section")[i-1]
-.children[0].style.display="block";
-
+save();
 }
 }
 
-/* ===== NORTH ENTITY EVOLUTION ===== */
-
-function update(){
-
-let p=s.v+s.f;
-
-let st=document.getElementById("state");
-let ec=document.getElementById("echo");
-
-if(p<5){
-st.innerText="STATUS: TRACE RESIDUE";
-ec.innerText="";
-}
-else if(p<12){
-st.innerText="STATUS: SIGNAL ECHO";
-ec.innerText="pattern instability detected";
-}
-else if(p<22){
-st.innerText="STATUS: DISTRIBUTED ANOMALY";
-ec.innerText="it is adapting to observation";
-}
-else{
-st.innerText="STATUS: NORTH IS AWARE";
-ec.innerText="you are part of the system now";
-}
-
-}
-
-/* ===== HIDDEN TOGGLE ===== */
-
+/* DOSSIER TOGGLE */
 function toggle(id){
 let e=document.getElementById(id);
 e.style.display=e.style.display==="block"?"none":"block";
-s.v++;save();update();
+s.v++;
+update();
+save();
 }
 
-/* ===== RESET ===== */
+/* NORTH EVOLUTION SYSTEM */
+function update(){
+let p=s.v+s.f;
+let st=document.getElementById("state");
 
-function reset(){
-localStorage.removeItem("NORTH_CORE");
-location.reload();
+if(p<5) st.innerText="STATUS: TRACE RESIDUE";
+else if(p<12) st.innerText="STATUS: SIGNAL ECHO";
+else if(p<20) st.innerText="STATUS: DISTRIBUTED ANOMALY";
+else st.innerText="STATUS: NORTH AWARENESS ACTIVE";
+}
+
+/* SAVE STATE */
+function save(){
+localStorage.setItem("NORTH_ARG",JSON.stringify(s));
 }
 
 /* INIT */
-
-unlock();
 update();
+save();
 
 </script>
 
