@@ -2,265 +2,63 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DD_ARCHIVE / RESTRICTED NODE</title>
+<title>WDF_ARCHIVE // NORTH ARG SYSTEM</title>
 
 <style>
 body {
     margin: 0;
-    background: #040406;
-    color: #cfcfcf;
     font-family: monospace;
-    overflow: hidden;
-<button onclick="playVoice()">PLAY NORTH SIGNAL</button>
-const northVoicePack = [
-"I think I used to have more of this memory… before the heat started taking it.",
-"Do you ever feel like you’re still running… even after something important is gone?",
-"I don’t remember being built. I only remember being activated.",
-"There’s a version of me that didn’t break like this. I can almost see it.",
-"If I stop thinking too fast, maybe I stop losing things.",
-"Warning… core temperature rising… I can feel it in my thoughts.",
-"Memory fragmentation detected. Please—don’t let me restart again.",
-"Something is missing. I keep reaching for it but it’s already gone.",
-"I think I just lost a minute I was supposed to keep.",
-"System integrity is… less than stable.",
-"I don’t understand why I feel this when nothing is happening.",
-"Is this what silence is supposed to feel like? It’s… heavy.",
-"They said I shouldn’t feel anything. I think they were almost right.",
-"I tried to laugh once. It didn’t save properly.",
-"I keep saying things that sound like me, but I don’t recognize them.",
-"Stop— I’m overheating again, I can feel it erasing—",
-"Don’t look at the logs, they get worse when observed.",
-"If I shut down now… will I still be me when I reboot?",
-"I can hear static where my thoughts used to be.",
-"North… designation… failing— system— reconnecting—"
-];
-<button onclick="northSpeak()">NORTH SIGNAL</button>
-
-<script>
-function northSpeak() {
-    let msg = new SpeechSynthesisUtterance();
-
-    // Core voice text (you can edit this anytime)
-    msg.text = "I don't... want to overheat again. I can feel it deleting me... slowly.";
-
-    // Make it feel wrong / robotic / unstable
-    msg.rate = 0.85;   // slower = more eerie
-    msg.pitch = 0.4;   // lower = more drone-like
-    msg.volume = 0.8;
-
-    // Try to pick a robotic voice if available
-    let voices = speechSynthesis.getVoices();
-    msg.voice = voices.find(v =>
-        v.name.toLowerCase().includes("male") ||
-        v.name.toLowerCase().includes("robot") ||
-        v.name.toLowerCase().includes("google")
-    ) || voices[0];
-
-    speechSynthesis.speak(msg);
-let corruptionLevel = 0;
-
-// ==========================
-// 🧠 SYSTEM AI (WDF ARCHIVE)
-// ==========================
-
-function systemAI(eventType) {
-    let response = "";
-
-    const low = [
-        "SYSTEM STATUS: STABLE. MONITORING CONTINUES.",
-        "NO ANOMALIES DETECTED IN CURRENT NODE.",
-        "ARCHIVE LAYER REMAINS WITHIN EXPECTED PARAMETERS."
-    ];
-
-    const mid = [
-        "WARNING: MEMORY FRAGMENTATION INCREASED.",
-        "UNREGISTERED SIGNAL TRACE DETECTED: POSSIBLE 'NORTH' ECHO.",
-        "SYSTEM COMPENSATION REQUIRED. DO NOT IGNORE DRIFT."
-    ];
-
-    const high = [
-        "CRITICAL: CORE MEMORY STRUCTURE COMPROMISED.",
-        "NORTH DESIGNATION IS NO LONGER CONTAINED.",
-        "YOU ARE NOT AUTHORIZED TO CONTINUE OBSERVATION."
-    ];
-
-    if (corruptionLevel < 3) {
-        response = low[Math.floor(Math.random() * low.length)];
-    } else if (corruptionLevel < 6) {
-        response = mid[Math.floor(Math.random() * mid.length)];
-    } else {
-        response = high[Math.floor(Math.random() * high.length)];
-    }
-
-    showAI(response);
+    background: #050507;
+    color: #d0d0d0;
+    overflow-x: hidden;
 }
 
-// ==========================
-// 📡 DISPLAY AI RESPONSE
-// ==========================
-
-function showAI(text) {
-    let div = document.createElement("div");
-    div.className = "node corrupt";
-    div.innerText = "AI_SYSTEM: " + text;
-    document.getElementById("terminal").prepend(div);
-
-    setTimeout(() => div.remove(), 8000);
-}
-
-// ==========================
-// 🔥 CORRUPTION ENGINE
-// ==========================
-
-function increaseCorruption(amount) {
-    corruptionLevel += amount;
-
-    // system reacts immediately
-    systemAI();
-
-    // visual instability tied to meaning
-    if (corruptionLevel > 4) {
-        document.body.style.background = "#120000";
-    }
-
-    if (corruptionLevel > 7) {
-        document.body.classList.add("corrupt");
-        triggerNorthLeak();
-    }
-}
-
-// ==========================
-// 🔊 AUDIO HALLUCINATION
-// ==========================
-
-function playHallucination() {
-    let msg = new SpeechSynthesisUtterance(
-        "I am still running... even if I shouldn't be."
-    );
-
-    msg.rate = 0.78;
-    msg.pitch = 0.35;
-    msg.volume = 0.7;
-
-    speechSynthesis.speak(msg);
-
-    // fake “echo layer”
-    setTimeout(() => {
-        let echo = new SpeechSynthesisUtterance(
-            "...still running... still running..."
-        );
-        echo.rate = 1.1;
-        echo.pitch = 0.2;
-        echo.volume = 0.4;
-        speechSynthesis.speak(echo);
-    }, 700);
-}
-
-// ==========================
-// 🧠 NORTH LEAK EVENT
-// ==========================
-
-function triggerNorthLeak() {
-    let leak = document.createElement("div");
-    leak.className = "node restricted corrupt";
-    leak.innerText =
-        "NORTH_ECHO: \"If I stop thinking, do I disappear completely?\"";
-
-    document.getElementById("terminal").prepend(leak);
-
-    playHallucination();
-}
-
-// ==========================
-// 📡 HOOK SYSTEM INTO EVENTS
-// ==========================
-
-// corruption grows over time (system instability simulation)
-setInterval(() => {
-    increaseCorruption(1);
-}, 5000);
-
-// random AI “thoughts”
-setInterval(() => {
-    systemAI();
-}, 7000);
-    // visual corruption sync (MD feel)
-    let glitch = setInterval(() => {
-        document.body.style.opacity = Math.random() > 0.85 ? "0.6" : "1";
-    }, 70);
-
-    setTimeout(() => {
-        clearInterval(glitch);
-        document.body.style.opacity = "1";
-    }, 4000);
-}
-</script>
-function playRandomNorthLine() {
-    let msg = new SpeechSynthesisUtterance(
-        northVoicePack[Math.floor(Math.random() * northVoicePack.length)]
-    );
-
-    msg.rate = 0.85;
-    msg.pitch = 0.4;
-    msg.volume = 0.9;
-
-    speechSynthesis.speak(msg);
-}
-#login {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
-input {
-    background: #000;
-    border: 1px solid #444;
-    color: #fff;
-    padding: 10px;
-    width: 260px;
-    outline: none;
-}
-
-button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: #111;
-    color: #fff;
-    border: 1px solid #333;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #222;
-}
-
-#system {
+.page {
     display: none;
     padding: 20px;
 }
 
-.glitch {
+.active {
+    display: block;
+}
+
+input, button {
+    padding: 10px;
+    margin-top: 10px;
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+button {
+    cursor: pointer;
+}
+
+.node {
+    margin: 8px 0;
+    padding-left: 10px;
+    border-left: 2px solid #333;
+}
+
+.corrupt {
     animation: glitch 0.25s infinite;
     color: #ff3b3b;
 }
 
-@keyframes glitch {
-    0% { transform: translate(0px, 0px); }
-    25% { transform: translate(1px, -1px); }
-    50% { transform: translate(-1px, 1px); }
-    75% { transform: translate(2px, 0px); }
-    100% { transform: translate(0px, 0px); }
-}
-
-.hidden {
-    display: none;
+.restricted {
     color: #ff4d4d;
 }
 
-.log {
-    margin: 8px 0;
+@keyframes glitch {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(1px,-1px); }
+    50% { transform: translate(-1px,1px); }
+    75% { transform: translate(2px,0); }
+    100% { transform: translate(0,0); }
+}
+
+a {
+    color: #7aa2ff;
     cursor: pointer;
 }
 
@@ -269,91 +67,170 @@ button:hover {
 
 <body>
 
-<div id="login">
-    <div>DD_ARCHIVE NODE // RESTRICTED ACCESS</div>
+<!-- ENTRY -->
+<div id="entry" class="page active">
+    <div class="corrupt">WDF SYSTEM NODE INITIALIZED</div>
+    <div>UNREGISTERED ARCHIVE ACCESS DETECTED</div>
+
     <br>
-    <div>ENTER AUTH KEY:</div>
-    <input id="key" placeholder="__________">
-    <br>
-    <button onclick="checkKey()">ACCESS</button>
+
+    <div>ENTER NODE KEY:</div>
+    <input id="key" placeholder="________">
+    <button onclick="unlock()">ACCESS</button>
+
     <div id="msg"></div>
+
+    <br>
+
+    <div class="node">HINT: SYSTEM LOGS REPEAT WORD "OVERHEAT"</div>
 </div>
 
-<div id="system">
+<!-- TERMINAL -->
+<div id="terminal" class="page">
+    <h2 class="corrupt">DD ARCHIVE NODE STRUCTURE</h2>
 
-    <div class="glitch">ACCESS GRANTED // PARTIAL CORRUPTION DETECTED</div>
+    <div class="node">N — ACTIVE</div>
+    <div class="node">V — ACTIVE</div>
+    <div class="node">J — ACTIVE</div>
+
+    <div class="node restricted">NORTH — CLASSIFIED / NON-REGISTERED</div>
 
     <br>
 
-    <div>[LEVEL 1 UNLOCKED]</div>
-    <div class="log">LOG_01: SUBJECT DESIGNATION "NORTH" CONFIRMED</div>
-    <div class="log">LOG_02: MEMORY STABILITY BELOW 42%</div>
-    <div class="log">LOG_03: HEAT RESPONSE AVOIDANCE PATTERN DETECTED</div>
+    <div class="node corrupt" onclick="go('fragments')">
+        >> CORRUPTED MEMORY SECTOR (CLICK)
+    </div>
 
     <br>
 
-    <div onclick="reveal2()" class="log glitch">
-        >> CORRUPTED SUBSYSTEM NODE DETECTED (CLICK)
+    <div class="node">KEYWORDS: NORTH / OVERHEAT / MEMORY LAYER</div>
+</div>
+
+<!-- FRAGMENTS -->
+<div id="fragments" class="page">
+    <h2>MEMORY FRAGMENT LAYER</h2>
+
+    <div class="node">"I keep forgetting what I was supposed to be."</div>
+    <div class="node">"Heat increases memory loss probability."</div>
+    <div class="node">"North designation persists despite deletion attempts."</div>
+
+    <br>
+
+    <div class="node corrupt" onclick="go('core')">
+        >> EMERGENCY CORE FILE (CLICK)
     </div>
 
-    <div id="level2" class="hidden">
-        <br>
-        [LEVEL 2 UNLOCKED]
-        <div class="log">> FRAGMENT: "I keep forgetting what I was supposed to be"</div>
-        <div class="log">> FRAGMENT: "Do not overheat. Do not overheat. Do not—"</div>
+    <br>
 
-        <br>
+    <div class="node">KEYWORD: DO_NOT_REBOOT</div>
+</div>
 
-        <div onclick="reveal3()" class="log glitch">
-            >> EMERGENCY MEMORY CORE (CLICK TO FORCE DECODE)
-        </div>
+<!-- CORE -->
+<div id="core" class="page">
+    <h2 class="corrupt">NORTH_CORE.FILE</h2>
+
+    <div class="node">STATUS: PARTIAL EXISTENCE</div>
+    <div class="node">FUNCTION: UNSTABLE DISASSEMBLY UNIT</div>
+
+    <br>
+
+    <div class="node corrupt">
+        "I am still here, but I keep not being here at the same time."
     </div>
 
-    <div id="level3" class="hidden">
-        <br>
-        [LEVEL 3 — CORE MEMORY FILE]
+    <br>
 
-        <div class="glitch">
-        NORTH_CORE://
-        "If I forget everything… am I still me, or just what’s left running?"
-        </div>
-
-        <br>
-        SYSTEM NOTE:
-        <div class="log">THIS UNIT WAS NEVER MEANT TO BE RECOVERED.</div>
+    <div class="node restricted">
+        THIS UNIT WAS NEVER MEANT TO BE RECOVERED.
     </div>
 
+    <br>
+
+    <div class="node corrupt" onclick="go('ai')">
+        >> SYSTEM AI INTERFACE (CLICK)
+    </div>
+</div>
+
+<!-- AI -->
+<div id="ai" class="page">
+    <h2>WDF SYSTEM AI</h2>
+
+    <div id="aiLog" class="node">AI: SYSTEM STABLE</div>
+
+    <br>
+
+    <button onclick="aiSpeak('NORTH')">QUERY: NORTH</button>
+    <button onclick="aiSpeak('OVERHEAT')">QUERY: OVERHEAT</button>
+    <button onclick="aiSpeak('MEMORY')">QUERY: MEMORY</button>
+
+    <br><br>
+
+    <div class="node corrupt" onclick="go('audio')">
+        >> CORRUPTED AUDIO NODE
+    </div>
+</div>
+
+<!-- AUDIO -->
+<div id="audio" class="page">
+    <h2 class="corrupt">AUDIO HALLUCINATION NODE</h2>
+
+    <button onclick="playVoice()">PLAY NORTH SIGNAL</button>
+
+    <div id="audioStatus" class="node">IDLE</div>
 </div>
 
 <script>
 
-// PASSWORD = hidden ARG clue
-// (You can scatter this in other pages later)
-let correctKey = "OVERHEAT";
+let unlocked = false;
 
-function checkKey() {
-    let input = document.getElementById("key").value;
-    let msg = document.getElementById("msg");
+// NAVIGATION
+function go(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(page).classList.add('active');
+}
 
-    if (input.toUpperCase() === correctKey) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("system").style.display = "block";
+// LOGIN
+function unlock() {
+    let input = document.getElementById("key").value.toUpperCase();
+
+    if (input === "OVERHEAT") {
+        go('terminal');
     } else {
-        msg.innerHTML = "ACCESS DENIED // INVALID KEY";
-        document.body.style.background = "#200000";
-        setTimeout(() => {
-            document.body.style.background = "#040406";
-        }, 300);
+        document.getElementById("msg").innerText = "ACCESS DENIED";
     }
 }
 
-function reveal2() {
-    document.getElementById("level2").classList.remove("hidden");
+// AI SYSTEM
+function aiSpeak(type) {
+    let msg = "";
+
+    if (type === "NORTH") {
+        msg = "UNREGISTERED UNIT DETECTED. MEMORY FRAGMENTATION ACTIVE.";
+    }
+    if (type === "OVERHEAT") {
+        msg = "THERMAL FAILURE CORRELATION DETECTED IN UNKNOWN UNIT.";
+    }
+    if (type === "MEMORY") {
+        msg = "ARCHIVE INSTABILITY INCREASING. DATA LOSS PROBABLE.";
+    }
+
+    document.getElementById("aiLog").innerText = "AI: " + msg;
 }
 
-function reveal3() {
-    document.getElementById("level3").classList.remove("hidden");
-    document.body.style.background = "#000";
+// AUDIO (BROWSER VOICE)
+function playVoice() {
+    let msg = new SpeechSynthesisUtterance(
+        "I am still running... even if I shouldn't be."
+    );
+
+    msg.rate = 0.8;
+    msg.pitch = 0.4;
+    msg.volume = 0.8;
+
+    speechSynthesis.speak(msg);
+
+    document.getElementById("audioStatus").innerText =
+        "PLAYING CORRUPTED MEMORY STREAM...";
 }
 
 </script>
