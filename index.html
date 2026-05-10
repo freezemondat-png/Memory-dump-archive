@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>NORTH // NETWORK SYSTEM</title>
+<title>NORTH // DRONE COLONY ARCHIVE</title>
 
 <style>
 body{
 margin:0;
-background:radial-gradient(circle at center,#04060c,#01020a 60%,#000);
+background:radial-gradient(circle at center,#05070c,#01010a 60%,#000);
 color:#d6e4ff;
 font-family:monospace;
 text-align:center;
@@ -19,8 +19,8 @@ text-align:center;
 max-width:800px;
 margin:30px auto;
 padding:15px;
-border:1px solid #24314f;
-background:rgba(10,15,25,0.6);
+border:1px solid #2a3a5f;
+background:rgba(10,15,25,0.65);
 }
 
 .glitch{
@@ -34,21 +34,8 @@ animation:f .09s infinite;
 100%{opacity:1}
 }
 
-a,button{
-display:block;
-margin:10px auto;
-padding:10px;
-background:black;
-color:#d6e4ff;
-border:1px solid #4f7cff;
-font-family:monospace;
-cursor:pointer;
-text-decoration:none;
-width:200px;
-}
-
 .section{
-border:1px solid #1f2b45;
+border:1px solid #1d2b45;
 padding:10px;
 margin:10px 0;
 cursor:pointer;
@@ -62,6 +49,16 @@ border-left:2px solid #7aa2ff;
 padding:10px;
 }
 
+button{
+background:black;
+color:#d6e4ff;
+border:1px solid #4f7cff;
+padding:10px;
+margin:10px;
+cursor:pointer;
+font-family:monospace;
+}
+
 .corrupt{color:#ff6b6b}
 .small{font-size:12px;opacity:.6}
 </style>
@@ -71,42 +68,42 @@ padding:10px;
 
 <div class="wrap">
 
-<h1>HERO COMMISSION NETWORK</h1>
-<p class="glitch">NORTH PROTOCOL ACTIVE // MULTI-NODE SYSTEM</p>
+<h1>COLONY NETWORK ARCHIVE</h1>
+<p class="glitch">UNKNOWN ENTITY SIGNAL DETECTED // DESIGNATION: NORTH</p>
 
 <div class="panel">
 
 <div class="section" onclick="node('ch1')">
-📁 NODE A-01 INCIDENT
-<div class="hidden">Origin record missing from system.</div>
+📁 NODE-01 INCIDENT REPORT
+<div class="hidden">Worker unit missing from assigned sector.</div>
 </div>
 
 <div class="section" onclick="node('ch2')">
-📁 NODE B-02 FEED
-<div class="hidden">Audio fragment: “it observes even when unseen”</div>
+📁 NODE-02 SECURITY FEED
+<div class="hidden">Camera loop corrupted: “it is already inside the system”</div>
 </div>
 
 <div class="section" onclick="node('ch3')">
-📁 NODE C-03 LOG
-<div class="hidden">System rewriting increases under repetition cycles.</div>
+📁 NODE-03 CORE LOG
+<div class="hidden">Self-rewriting protocol detected in colony database.</div>
 </div>
 
 <div class="section" onclick="node('ch4')">
-📁 NODE D-04 FRACTURE
-<div class="hidden">N O R T H distributed across archive network.</div>
+📁 NODE-04 FRACTURE EVENT
+<div class="hidden">Disassembly-class signal distributed across network grid.</div>
 </div>
 
-<button onclick="toggleDossier()">DOSSIER ACCESS</button>
+<button onclick="toggle('dossier')">ACCESS CLASSIFIED DRONE FILE</button>
 
 <div id="dossier" class="hidden">
 
-<h2 class="glitch">DOSSIER: NORTH ENTITY</h2>
+<h2 class="glitch">ENTITY DOSSIER: NORTH</h2>
 
 <p id="state">STATUS: INITIALIZING</p>
 
 <p id="memory"></p>
 
-<p class="corrupt" id="echo"></p>
+<p id="echo" class="corrupt"></p>
 
 </div>
 
@@ -116,99 +113,98 @@ padding:10px;
 
 <script>
 
-/* ================= CORE ARG ENGINE ================= */
+/* ===== CORE DRONE ARG ENGINE ===== */
 
-let s = JSON.parse(localStorage.getItem("NORTH_CORE")||"{}");
+let s=JSON.parse(localStorage.getItem("DRONE_CORE")||"{}");
 
-s.v ||= 0;
-s.f ||= 0;
-s.seed ||= Math.random()*10;
-s.history ||= [];
+s.v||=0;
+s.f||=0;
+s.history||=[];
+s.seed||=Math.random()*10;
 
 s.v++;
 
-/* ================= NODE DATA ================= */
+/* ===== NODE DATA ===== */
 
-const logs = {
-ch1:"NODE A-01: origin unregistered.",
-ch2:"NODE B-02: interference detected in feed.",
-ch3:"NODE C-03: system rewriting observed.",
-ch4:"NODE D-04: NORTH distributed anomaly confirmed."
+const logs={
+ch1:"NODE-01: worker unit anomaly detected.",
+ch2:"NODE-02: surveillance feed corrupted.",
+ch3:"NODE-03: core rewriting self-adjusting parameters.",
+ch4:"NODE-04: disassembly-class entity signature: NORTH"
 };
 
-/* ================= NODE SYSTEM ================= */
+/* ===== NODE SYSTEM ===== */
 
 function node(id){
 
 document.querySelectorAll(".hidden").forEach(e=>e.style.display="none");
 
-/* show node log */
-alert(logs[id] || "CORRUPTED NODE");
+alert(logs[id] || "DATA CORRUPTED");
 
-/* tracking behavior */
+/* repetition detection */
 if(s.history.includes(id)){
 s.f += 1;
-document.getElementById("echo").innerText="REPEAT OBSERVATION DETECTED";
+document.getElementById("echo").innerText="REPEATED ACCESS PATTERN DETECTED";
 }else{
 s.history.push(id);
 }
 
-/* escalation trigger */
-if(Math.random() < 0.2){
-document.getElementById("echo").innerText="LOG ALTERED AFTER VIEWING";
+/* anomaly chance */
+if(Math.random()<0.25){
+document.getElementById("echo").innerText="LOG ALTERED AFTER OBSERVATION";
 }
 
 save();
 update();
 }
 
-/* ================= DOSSIER ================= */
+/* ===== DOSSIER TOGGLE ===== */
 
-function toggleDossier(){
-let d=document.getElementById("dossier");
-d.style.display = d.style.display==="block"?"none":"block";
+function toggle(id){
+let e=document.getElementById(id);
+e.style.display=e.style.display==="block"?"none":"block";
 s.v++;
 save();
 update();
 }
 
-/* ================= EVOLUTION SYSTEM ================= */
+/* ===== EVOLUTION SYSTEM ===== */
 
 function update(){
 
-let p = s.v + s.f;
+let p=s.v+s.f;
 
 let st=document.getElementById("state");
 let mem=document.getElementById("memory");
 
-/* NORTH state evolution */
-if(p < 5) st.innerText="STATUS: TRACE RESIDUE";
-else if(p < 12) st.innerText="STATUS: SIGNAL ECHO";
-else if(p < 20) st.innerText="STATUS: DISTRIBUTED ANOMALY";
+/* escalating drone intelligence states */
+if(p<5) st.innerText="STATUS: TRACE SIGNAL";
+else if(p<12) st.innerText="STATUS: CORRUPTED FEED";
+else if(p<20) st.innerText="STATUS: DISTRIBUTED ENTITY";
 else st.innerText="STATUS: NORTH AWARENESS ACTIVE";
 
 /* memory distortion */
 mem.innerText =
-"OBSERVATION LOG: " + JSON.stringify(s.history).slice(0,200);
+"COLONY LOG HISTORY: " + JSON.stringify(s.history).slice(0,200);
 
-/* fake external system leakage */
-if(p > 12){
-mem.innerText += "\nREMOTE NODE: OFFLINE // SIGNAL LEAK DETECTED";
+/* external system illusion */
+if(p>12){
+mem.innerText += "\nOUTER GRID: OFFLINE // SIGNAL LEAKING FROM UNKNOWN NODE";
 }
 
 /* contradiction layer */
-if(Math.random() < 0.3){
+if(Math.random()<0.3){
 document.getElementById("echo").innerText =
-"WARNING: PREVIOUS LOGS MAY HAVE BEEN ALTERED";
+"WARNING: PRIOR LOGS MAY HAVE BEEN ALTERED BY UNKNOWN ENTITY";
 }
 
 save();
 }
 
-/* ================= SAVE ================= */
+/* ===== SAVE ===== */
 
 function save(){
-localStorage.setItem("NORTH_CORE",JSON.stringify(s));
+localStorage.setItem("DRONE_CORE",JSON.stringify(s));
 }
 
 /* INIT */
